@@ -1,0 +1,30 @@
+.model-instant-search{
+	position: fixed;
+	padding: 5px;
+	border: solid #888 1px;
+	background: #FFF;
+	box-shadow: 1px 1px 2px #999;
+	z-index: 1100;
+	overflow-x : hidden;
+	overflow-y : auto;
+}
+
+.model-instant-search > div{
+	padding: 5px;
+	cursor: pointer;
+}
+
+.model-instant-search > div.selected{
+	background: #FFDD9C;
+}
+
+.model-instant-search-result{
+	display: inline-block;
+	padding: 3px;
+	cursor: pointer;
+}
+
+.model-instant-search-marked{
+	color: #999;
+	cursor: default;
+}
