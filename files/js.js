@@ -379,23 +379,18 @@ window.addEventListener('keydown', function(event){
 
 	switch(event.keyCode){
 		case 13:
-			if(activeInstantSearch){
-				event.stopImmediatePropagation();
-				event.preventDefault();
+			event.stopImmediatePropagation();
+			event.preventDefault();
 
-				var el;
-				if(el = _('is-'+activeInstantSearch['current'])){
-					el.go();
-					return false;
-				}
+			var el;
+			if(el = _('is-'+activeInstantSearch['current'])){
+				el.go();
+				return false;
 			}
 			break;
 		case 27:
-			if(activeInstantSearch){
-				event.preventDefault();
-				event.stopImmediatePropagation();
-			}
-
+			event.preventDefault();
+			event.stopImmediatePropagation();
 			closeInstantSearch();
 			return false;
 			break;
