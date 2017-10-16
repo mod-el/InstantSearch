@@ -57,7 +57,7 @@ class Base{
 		return $text;
 	}
 
-	public function getList($query){
+	public function getList($query, $is_popup = false){
 		if(!$this->options['table'] or !$this->options['fields'])
 			return '';
 
@@ -70,10 +70,19 @@ class Base{
 		$array = [];
 		if($q){
 			foreach($q as $s) {
-				$array[] = [
+				$arr = [
 					'id' => $s['id'],
 					'text' => $this->getText($s),
 				];
+
+				if($is_popup){
+					$arr['fields'] = [];
+					foreach($this->options['fields'] as $f){
+						$arr['fields'][$f] = isset($s[$f]) ? $s[$f] : null;
+					}
+				}
+
+				$array[] = $arr;
 			}
 		}
 		return $array;
