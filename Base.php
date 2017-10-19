@@ -15,6 +15,7 @@ class Base{
 		$this->options = array_merge([
 			'table' => null,
 			'fields' => null,
+			'table-fields' => null,
 			'pattern' => null,
 			'where' => [],
 			'limit' => 200,
@@ -29,12 +30,11 @@ class Base{
 		if(!$this->options['table'])
 			return '';
 
-		if(!is_string($this->options['pattern'])){
+		if($this->options['pattern']===null){
 			if(!$this->options['fields'])
 				return '';
-			$this->options['pattern'] = implode(' ', array_map(function($f){
-				return '[:'.$f.']';
-			}, $this->options['fields']));
+
+			$this->options['pattern'] = $this->makePattern($this->options['fields']);
 		}
 
 		if(is_numeric($r))
@@ -57,11 +57,21 @@ class Base{
 		return $text;
 	}
 
-	public function getList($query){
-		if(!$this->options['table'] or !$this->options['fields'])
+	public function makePattern($fields){
+		return implode(' ', array_map(function($f){
+			return '[:'.$f.']';
+		}, $fields));
+	}
+
+	public function getList($query, $is_popup = false){
+		$fields = $this->options['fields'];
+		if($is_popup and $this->options['table-fields'])
+			$fields = $this->options['table-fields'];
+
+		if(!$this->options['table'] or !$fields)
 			return '';
 
-		$where = $this->makeQuery($query, $this->options['fields']);
+		$where = $this->makeQuery($query, $fields);
 		if($this->options['where']){
 			$where = array_merge($this->options['where'], $where);
 		}
@@ -70,10 +80,19 @@ class Base{
 		$array = [];
 		if($q){
 			foreach($q as $s) {
-				$array[] = [
+				$arr = [
 					'id' => $s['id'],
 					'text' => $this->getText($s),
 				];
+
+				if($is_popup){
+					$arr['fields'] = [];
+					foreach($fields as $f){
+						$arr['fields'][$f] = isset($s[$f]) ? $s[$f] : null;
+					}
+				}
+
+				$array[] = $arr;
 			}
 		}
 		return $array;

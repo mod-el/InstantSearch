@@ -11,6 +11,7 @@ class MField_instantsearch extends MField {
 			'table',
 			'pattern',
 			'fields',
+			'table-fields',
 			'where',
 			'post',
 			'post-function',

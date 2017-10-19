@@ -1,5 +1,6 @@
 var instantSearches = {};
 var activeInstantSearch = false;
+var popupLastSearched = '';
 
 /*
 Rules:
@@ -30,6 +31,7 @@ function checkInstantSearches(){
 				'table': null,
 				'pattern': null,
 				'fields': {},
+				'table-fields': {},
 				'where': null,
 				'post': null,
 				'post-function': null,
@@ -63,7 +65,9 @@ function checkInstantSearches(){
 		if(el.getAttribute('data-where'))
 			instantSearches[name]['where'] = el.getAttribute('data-where');
 		if(el.getAttribute('data-fields'))
-			instantSearches[name].fields[fieldName] = el.getAttribute('data-fields').split(',');
+			instantSearches[name]['fields'][fieldName] = el.getAttribute('data-fields').split(',');
+		if(el.getAttribute('data-table-fields'))
+			instantSearches[name]['table-fields'][fieldName] = el.getAttribute('data-table-fields').split(',');
 		if(el.getAttribute('data-post'))
 			instantSearches[name]['post'] = el.getAttribute('data-post');
 		if(el.getAttribute('data-post-function')) {
@@ -91,6 +95,51 @@ function checkInstantSearches(){
 			}
 			setTimeout(closeInstantSearch, 300);
 		});
+
+		if(typeof el.contextMenu!=='undefined'){
+			el.contextMenu({
+				'Ricerca avanzata': function(){
+					var url = absolute_path+'instant-search';
+					if(instantSearches[name].id)
+						url += '/'+instantSearches[name].id;
+
+					var get = [
+						'popup=1'
+					];
+
+					if(instantSearches[name].table)
+						get.push('table='+encodeURIComponent(instantSearches[name].table));
+					if(instantSearches[name].pattern)
+						get.push('pattern='+encodeURIComponent(instantSearches[name].pattern));
+					if(instantSearches[name].where)
+						get.push('where='+encodeURIComponent(instantSearches[name].where));
+					if(instantSearches[name]['fields'][fieldName])
+						get.push('fields='+encodeURIComponent(instantSearches[name]['fields'][fieldName].join(',')));
+					if(instantSearches[name]['table-fields'][fieldName])
+						get.push('table-fields='+encodeURIComponent(instantSearches[name]['table-fields'][fieldName].join(',')));
+
+					get = get.join('&');
+
+					var post = '';
+					if(instantSearches[name]['post'])
+						post = instantSearches[name]['post'];
+					else if(instantSearches[name]['post-function'])
+						post = instantSearches[name]['post-function'].call(field);
+
+					activeInstantSearch = {
+						'name': name,
+						'field': this,
+						'fieldName': fieldName,
+						'current': -1,
+						'popup': true
+					}
+
+					popupLastSearched = false;
+
+					zkPopup({'url': url, 'get': get, 'post': post}, {'onLoad': popupInstantSearch});
+				}
+			});
+		}
 
 		el.setAttribute('data-instant-search-set', '1');
 	});
@@ -158,6 +207,7 @@ function instantSearch(field, name, fieldName){
 		'field': field,
 		'fieldName': fieldName,
 		'current': -1,
+		'popup': false
 	}
 
 	var is;
@@ -207,8 +257,8 @@ function instantSearch(field, name, fieldName){
 		get.push('pattern='+encodeURIComponent(instantSearches[name].pattern));
 	if(instantSearches[name].where)
 		get.push('where='+encodeURIComponent(instantSearches[name].where));
-	if(instantSearches[name].fields[fieldName])
-		get.push('fields='+encodeURIComponent(instantSearches[name].fields[fieldName].join(',')));
+	if(instantSearches[name]['fields'][fieldName])
+		get.push('fields='+encodeURIComponent(instantSearches[name]['fields'][fieldName].join(',')));
 
 	get = get.join('&');
 
@@ -230,7 +280,7 @@ function instantSearch(field, name, fieldName){
 			if(instantSearches[name].values[fieldName]!==searchedValue)
 				return false;
 
-			activeInstantSearch.current = -1;
+			activeInstantSearch['current'] = -1;
 
 			if(r.length===0){
 				is.innerHTML = '<span style="color: #999">No results</span>';
@@ -248,7 +298,7 @@ function instantSearch(field, name, fieldName){
 					if(typeof res.onclick==='undefined')
 						res_el.onclick = false;
 					if(typeof res.fill==='undefined')
-						res.fill = [];
+						res.fill = {};
 					if(typeof res.mark==='undefined')
 						res.mark = Object.keys(res.fill);
 					is.appendChild(res_el);
@@ -339,7 +389,7 @@ function closeInstantSearch(){
 	if(is)
 		is.parentNode.removeChild(is);
 
-	if(activeInstantSearch)
+	if(activeInstantSearch && !activeInstantSearch.popup)
 		activeInstantSearch = false;
 }
 
@@ -379,23 +429,18 @@ window.addEventListener('keydown', function(event){
 
 	switch(event.keyCode){
 		case 13:
-			if(activeInstantSearch){
-				event.stopImmediatePropagation();
-				event.preventDefault();
+			event.stopImmediatePropagation();
+			event.preventDefault();
 
-				var el;
-				if(el = _('is-'+activeInstantSearch['current'])){
-					el.go();
-					return false;
-				}
+			var el;
+			if(el = _('is-'+activeInstantSearch['current'])){
+				el.go();
+				return false;
 			}
 			break;
 		case 27:
-			if(activeInstantSearch){
-				event.preventDefault();
-				event.stopImmediatePropagation();
-			}
-
+			event.preventDefault();
+			event.stopImmediatePropagation();
 			closeInstantSearch();
 			return false;
 			break;
@@ -519,11 +564,11 @@ function setInstantSearchValue(v, trigger_onchange){
 				if(instantSearches[name].where)
 					get.push('where='+encodeURIComponent(instantSearches[name].where));
 
-				var inputs = Object.keys(instantSearches[name].fields);
+				var inputs = Object.keys(instantSearches[name]['fields']);
 				if(inputs.length>0){
 					var firstField = inputs[0];
-					if(instantSearches[name].fields[firstField])
-						get.push('fields='+encodeURIComponent(instantSearches[name].fields[firstField].join(',')));
+					if(instantSearches[name]['fields'][firstField])
+						get.push('fields='+encodeURIComponent(instantSearches[name]['fields'][firstField].join(',')));
 				}
 
 				get = get.join('&');
@@ -568,4 +613,81 @@ function setInstantSearchValue(v, trigger_onchange){
 function resetAllInstantSearches(){
 	instantSearches = {};
 	activeInstantSearch = false;
+}
+
+function popupInstantSearch(){
+	if(!_('instant-search-value'))
+		return false;
+
+	var url = _('instant-search-url').getValue();
+	var get = _('instant-search-get').getValue();
+	var post = _('instant-search-post').getValue();
+	var v = _('instant-search-value').getValue();
+
+	if(v===popupLastSearched)
+		return false;
+
+	popupLastSearched = v;
+
+	get += '&text='+encodeURIComponent(v);
+
+	var table = _('instant-search-table');
+	while(table.rows.length>1)
+		table.deleteRow(-1);
+
+	loading(_('instant-search-cont-loading'));
+
+	ajax(url, get, post).then(function(r){
+		if(!_('instant-search-cont-loading'))
+			return false;
+
+		_('instant-search-cont-loading').innerHTML = '';
+
+		if(!r)
+			return false;
+		if(typeof r!=='object'){
+			alert(r);
+			return false;
+		}
+
+		if(_('instant-search-value').getValue()!==popupLastSearched)
+			return false;
+
+		activeInstantSearch['current'] = -1;
+
+		if(r.length===0){
+			_('instant-search-cont-loading').innerHTML = '<span style="color: #999">No results</span>';
+		}else {
+			var table = _('instant-search-table');
+
+			var firstRow = table.rows[0];
+
+			for (var nr in r) {
+				if(!r.hasOwnProperty(nr)) continue;
+
+				var tr = table.insertRow(-1);
+				for(var i in firstRow.cells){
+					if(!firstRow.cells.hasOwnProperty(i)) continue;
+
+					var td = tr.insertCell(-1);
+					td.innerHTML = r[nr].fields[firstRow.cells[i].getAttribute('data-field')];
+				}
+
+				tr.addEventListener('click', (function(res){
+					return function(){
+						setInstantSearchFromPopup(res);
+					}
+				})(r[nr]));
+			}
+		}
+	});
+}
+
+function setInstantSearchFromPopup(res){
+	if(typeof res.fill==='undefined')
+		res.fill = {};
+	if(typeof res.mark==='undefined')
+		res.mark = Object.keys(res.fill);
+	setInstantSearch(activeInstantSearch.name, activeInstantSearch.field, res);
+	zkPopupClose();
 }
