@@ -16,6 +16,8 @@ class InstantSearchController extends \Model\Controller {
 					$submodule_name = 'Base';
 				}
 
+				$is_popup = isset($_GET['popup']) ? true : false;
+
 				$submodule_name = '\\Model\\InstantSearch\\' . $submodule_name;
 
 				$options = [];
@@ -23,6 +25,8 @@ class InstantSearchController extends \Model\Controller {
 					$options['table'] = $_GET['table'];
 				if(isset($_GET['fields']))
 					$options['fields'] = explode(',', $_GET['fields']);
+				if(isset($_GET['table-fields']))
+					$options['table-fields'] = explode(',', $_GET['table-fields']);
 				if(isset($_GET['pattern']))
 					$options['pattern'] = $_GET['pattern'];
 				if(isset($_GET['limit']))
@@ -33,7 +37,7 @@ class InstantSearchController extends \Model\Controller {
 				$submodule = new $submodule_name($this->model, $options);
 
 				if(isset($_GET['text'])){
-					$array = $submodule->getList($_GET['text'], isset($_GET['popup']) ? true : false);
+					$array = $submodule->getList($_GET['text'], $is_popup);
 					echo json_encode($array);
 				}else if(isset($_GET['v'])){
 					echo $submodule->getText($_GET['v']);
@@ -42,12 +46,12 @@ class InstantSearchController extends \Model\Controller {
 				die();
 			}elseif(isset($_GET['popup'])){
 				$this->viewOptions['template-path'] = 'model/InstantSearch/templates';
+				$this->viewOptions['cache'] = false;
 				$this->viewOptions['showLayout'] = false;
 
-				if(isset($_GET['table-fields']) and $_GET['table-fields'])
-					$_GET['fields'] = $_GET['table-fields'];
-
-				if(isset($_GET['fields']))
+				if(isset($_GET['table-fields']))
+					$this->viewOptions['fields'] = explode(',', $_GET['table-fields']);
+				elseif(isset($_GET['fields']))
 					$this->viewOptions['fields'] = explode(',', $_GET['fields']);
 				else
 					$this->viewOptions['fields'] = ['instant-search-main'];
