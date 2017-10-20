@@ -26,7 +26,7 @@ class Base{
 
 	public function init(){}
 
-	public function getText(array $r){
+	public function getText($r){
 		if(!$r or !$this->options['table'])
 			return '';
 
