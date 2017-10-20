@@ -40,7 +40,7 @@ class InstantSearchController extends \Model\Controller {
 					$array = $submodule->getList($_GET['text'], $is_popup);
 					echo json_encode($array);
 				}else if(isset($_GET['v'])){
-					echo $submodule->getText($_GET['v']);
+					echo $submodule->getTextFromId($_GET['v']);
 				}
 
 				die();

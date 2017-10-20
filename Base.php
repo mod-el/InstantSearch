@@ -26,8 +26,8 @@ class Base{
 
 	public function init(){}
 
-	public function getText($r){
-		if(!$this->options['table'])
+	public function getText(array $r){
+		if(!$r or !$this->options['table'])
 			return '';
 
 		if($this->options['pattern']===null){
@@ -36,12 +36,6 @@ class Base{
 
 			$this->options['pattern'] = $this->makePattern($this->options['fields']);
 		}
-
-		if(is_numeric($r))
-			$r = $this->model->_Db->select($this->options['table'], $r);
-
-		if(!$r)
-			return '';
 
 		$text = $this->options['pattern'];
 		preg_match_all('/\[:([a-z0-9_-]+)\]/i', $this->options['pattern'], $matches);
@@ -55,6 +49,13 @@ class Base{
 		}
 
 		return $text;
+	}
+
+	public function getTextFromId($id){
+		$r = $this->model->_Db->select($this->options['table'], $id);
+		if(!$r)
+			return '';
+		return $this->getText($r);
 	}
 
 	public function makePattern($fields){
@@ -76,19 +77,19 @@ class Base{
 			$where = array_merge($this->options['where'], $where);
 		}
 
-		$q = $this->model->_Db->select_all($this->options['table'], $where, ['limit' => $this->options['limit']]);
+		$q = $this->model->_Db->select_all($this->options['table'], $where, ['limit' => $this->options['limit'], 'raw' => true]);
 		$array = [];
 		if($q){
-			foreach($q as $s) {
+			foreach($q as $r) {
 				$arr = [
-					'id' => $s['id'],
-					'text' => $this->getText($s),
+					'id' => $r['id'],
+					'text' => $this->getText($r),
 				];
 
 				if($is_popup){
 					$arr['fields'] = [];
 					foreach($fields as $f){
-						$arr['fields'][$f] = isset($s[$f]) ? $s[$f] : null;
+						$arr['fields'][$f] = isset($r[$f]) ? $r[$f] : null;
 					}
 				}
 
