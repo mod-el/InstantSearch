@@ -635,7 +635,7 @@ function popupInstantSearch(){
 	while(table.rows.length>1)
 		table.deleteRow(-1);
 
-	loading(_('instant-search-cont-loading'));
+	_('instant-search-cont-loading').loading();
 
 	ajax(url, get, post).then(function(r){
 		if(!_('instant-search-cont-loading'))
