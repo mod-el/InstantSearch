@@ -52,7 +52,7 @@ class MField_instantsearch extends MField {
 			if (file_exists(INCLUDE_PATH . 'data/config/InstantSearch/' . $submodule_name . '.php'))
 				require_once(INCLUDE_PATH . 'data/config/InstantSearch/' . $submodule_name . '.php');
 			else
-				$submodule_name = 'Base';
+				$this->model->error('Instant Search error: provided submodule name "'.$submodule_name.'" does not seem to exist."');
 		}else{
 			$submodule_name = 'Base';
 		}
