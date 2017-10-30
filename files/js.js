@@ -96,8 +96,8 @@ function checkInstantSearches(){
 			setTimeout(closeInstantSearch, 300);
 		});
 
-		if(typeof el.contextMenu!=='undefined'){
-			el.contextMenu({
+		if(el.ctxMenu){
+			el.ctxMenu({
 				'Ricerca avanzata': function(){
 					var url = absolute_path+'instant-search';
 					if(instantSearches[name].id)
