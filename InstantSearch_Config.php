@@ -7,8 +7,8 @@ class InstantSearch_Config extends Module_Config {
 	 * @return bool
 	 */
 	public function makeCache(){
-		if (!is_dir(INCLUDE_PATH . 'data' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'InstantSearch'))
-			mkdir(INCLUDE_PATH . 'data' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'InstantSearch');
+		if (!is_dir(INCLUDE_PATH . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'InstantSearch'))
+			mkdir(INCLUDE_PATH . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'InstantSearch');
 
 		return true;
 	}
@@ -23,7 +23,7 @@ class InstantSearch_Config extends Module_Config {
 			'InstantSearch\\Base' => INCLUDE_PATH.'model'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR.'Base.php',
 		];
 
-		$files = glob(INCLUDE_PATH.'data'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR.'*');
+		$files = glob(INCLUDE_PATH.'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR.'*');
 		foreach($files as $f){
 			$file = pathinfo($f);
 			$classes['InstantSearch\\'.$file['filename']] = $f;
@@ -37,8 +37,8 @@ class InstantSearch_Config extends Module_Config {
 	 * @return bool
 	 */
 	public function install(array $data=[]){
-		if(!is_dir(INCLUDE_PATH.'data/config/InstantSearch'))
-			mkdir(INCLUDE_PATH.'data/config/InstantSearch');
+		if(!is_dir(INCLUDE_PATH.'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'))
+			mkdir(INCLUDE_PATH.'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch');
 		return true;
 	}
 
