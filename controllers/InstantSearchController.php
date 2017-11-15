@@ -8,8 +8,8 @@ class InstantSearchController extends \Model\Controller {
 			if(isset($_GET['text']) or isset($_GET['v'])){
 				if($this->model->getRequest(1)) {
 					$submodule_name = $this->model->getRequest(1);
-					if (file_exists(INCLUDE_PATH . 'data/config/InstantSearch/' . $submodule_name . '.php'))
-						require_once(INCLUDE_PATH . 'data/config/InstantSearch/' . $submodule_name . '.php');
+					if (file_exists(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $submodule_name . '.php'))
+						require_once(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $submodule_name . '.php');
 					else
 						$submodule_name = 'Base';
 				}else{

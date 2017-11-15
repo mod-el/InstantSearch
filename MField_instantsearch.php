@@ -49,8 +49,8 @@ class MField_instantsearch extends MField {
 
 		if(isset($this->options['instant-search-id']) and $this->options['instant-search-id']){
 			$submodule_name = $this->options['instant-search-id'];
-			if (file_exists(INCLUDE_PATH . 'data/config/InstantSearch/' . $submodule_name . '.php'))
-				require_once(INCLUDE_PATH . 'data/config/InstantSearch/' . $submodule_name . '.php');
+			if (file_exists(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $submodule_name . '.php'))
+				require_once(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $submodule_name . '.php');
 			else
 				$this->model->error('Instant Search error: provided submodule name "'.$submodule_name.'" does not seem to exist."');
 		}else{
