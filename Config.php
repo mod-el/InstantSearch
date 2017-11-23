@@ -20,14 +20,12 @@ class Config extends Module_Config {
 	 * @return array
 	 */
 	public function getClasses(){
-		$classes = [
-			'InstantSearch\\Base' => INCLUDE_PATH.'model'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR.'Base.php',
-		];
+		$classes = [];
 
 		$files = glob(INCLUDE_PATH.'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR.'*');
 		foreach($files as $f){
 			$file = pathinfo($f);
-			$classes['InstantSearch\\'.$file['filename']] = $f;
+			$classes['Model\\InstantSearch\\'.$file['filename']] = $f;
 		}
 
 		return $classes;
