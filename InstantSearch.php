@@ -1,7 +1,8 @@
-<?php
-namespace Model;
+<?php namespace Model\InstantSearch;
 
-class InstantSearch extends Module{
+use Model\Core\Module;
+
+class InstantSearch extends Module {
 	/**
 	 * Takes advantage of the Popup and ContextMenu modules, if present
 	 *
