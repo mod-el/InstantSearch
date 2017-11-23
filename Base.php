@@ -1,7 +1,6 @@
-<?php
-namespace Model\InstantSearch;
+<?php namespace Model\InstantSearch;
 
-use Model\Core;
+use Model\Core\Core;
 
 class Base{
 	/** @var \Model\Core */

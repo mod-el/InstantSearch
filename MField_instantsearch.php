@@ -1,5 +1,6 @@
-<?php
-namespace Model;
+<?php namespace Model\InstantSearch;
+
+use Model\Form\MField;
 
 class MField_instantsearch extends MField {
 	protected function renderWithLang(array $attributes, $lang = false){
