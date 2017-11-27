@@ -1,5 +1,5 @@
 <?php
-class InstantSearchController extends \Model\Controller {
+class InstantSearchController extends \Model\Core\Controller {
 	public function index(){
 		try{
 			if(!isset($_GET['v']) and !isset($_GET['text']) and !isset($_GET['popup']))
