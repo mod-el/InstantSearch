@@ -62,7 +62,7 @@ class MField_instantsearch extends MField {
 
 		$fieldOptions = $this->options;
 		if($fieldOptions['text-field'])
-			$fieldOptions['fields'] = $fieldOptions['text-field'];
+			$fieldOptions['fields'] = is_array($fieldOptions['text-field']) ? $fieldOptions['text-field'] : [$fieldOptions['text-field']];
 
 		$submodule = new $submodule_name($this->model, $fieldOptions);
 		return $submodule->getTextFromId($this->getValue($options['lang']));

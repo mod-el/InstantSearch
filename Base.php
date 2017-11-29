@@ -3,7 +3,7 @@
 use Model\Core\Core;
 
 class Base{
-	/** @var \Model\Core */
+	/** @var \Model\Core\Core */
 	protected $model;
 	/** @var array */
 	protected $options;
@@ -57,7 +57,7 @@ class Base{
 		return $this->getText($r);
 	}
 
-	public function makePattern($fields){
+	public function makePattern(array $fields){
 		return implode(' ', array_map(function($f){
 			return '[:'.$f.']';
 		}, $fields));
