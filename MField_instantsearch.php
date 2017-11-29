@@ -18,8 +18,10 @@ class MField_instantsearch extends MField {
 			'post-function',
 		];
 
-		$attributes['data-instant-search'] = isset($attributes['name']) ? $attributes['name'] : $this->options['name'];
-		unset($attributes['name']);
+		if(!isset($attributes['data-instant-search'])){
+			$attributes['data-instant-search'] = isset($attributes['name']) ? $attributes['name'] : $this->options['name'];
+			unset($attributes['name']);
+		}
 
 		foreach($is_options as $k){
 			if(isset($this->options[$k]) and $this->options[$k])
