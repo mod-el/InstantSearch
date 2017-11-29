@@ -38,35 +38,37 @@ class MField_instantsearch extends MField {
 		return 180;
 	}
 
-	function getJsValue($lang = null){
-		return [
-			'id' => $this->getValue($lang),
-			'text' => $this->getText(['lang' => $lang]),
-		];
+	public function getJsValue($lang = null){
+		return $this->getItem($lang);
 	}
 
-	function getText(array $options = []){
-		$options = array_merge([
-			'lang' => null,
-		], $options);
-
+	private function getItem($lang = null){
 		if(isset($this->options['instant-search-id']) and $this->options['instant-search-id']){
-			$submodule_name = $this->options['instant-search-id'];
-			if (file_exists(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $submodule_name . '.php'))
-				require_once(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $submodule_name . '.php');
+			$helper_name = $this->options['instant-search-id'];
+			if (file_exists(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $helper_name . '.php'))
+				require_once(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $helper_name . '.php');
 			else
-				$this->model->error('Instant Search error: provided submodule name "'.$submodule_name.'" does not seem to exist."');
+				$this->model->error('Instant Search error: provided helper name "'.$helper_name.'" does not seem to exist."');
 		}else{
-			$submodule_name = 'Base';
+			$helper_name = 'Base';
 		}
 
-		$submodule_name = '\\Model\\InstantSearch\\' . $submodule_name;
+		$helper_name = '\\Model\\InstantSearch\\' . $helper_name;
 
 		$fieldOptions = $this->options;
 		if($fieldOptions['text-field'])
 			$fieldOptions['fields'] = is_array($fieldOptions['text-field']) ? $fieldOptions['text-field'] : [$fieldOptions['text-field']];
 
-		$submodule = new $submodule_name($this->model, $fieldOptions);
-		return $submodule->getTextFromId($this->getValue($options['lang']));
+		$helper = new $helper_name($this->model, $fieldOptions);
+		return $helper->getItemFromId($this->getValue($lang));
+	}
+
+	public function getText(array $options = []){
+		$options = array_merge([
+			'lang' => null,
+		], $options);
+
+		$item = $this->getItem($options['lang']);
+		return $item['text'];
 	}
 }
