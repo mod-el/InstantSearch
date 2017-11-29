@@ -25,13 +25,25 @@ class Base{
 
 	public function init(){}
 
-	public function getText($r){
-		if(!$r or !$this->options['table'])
-			return '';
+	public function getItem($r){
+		if(!$r){
+			return [
+				'id' => null,
+				'text' => '',
+			];
+		}
+
+		$default = [
+			'id' => $r['id'],
+			'text' => '',
+		];
+
+		if(!$this->options['table'])
+			return $default;
 
 		if($this->options['pattern']===null){
 			if(!$this->options['fields'])
-				return '';
+				return $default;
 
 			$this->options['pattern'] = $this->makePattern($this->options['fields']);
 		}
@@ -47,14 +59,21 @@ class Base{
 			$text = str_replace('[:'.$f.']', $value, $text);
 		}
 
-		return $text;
+		return [
+			'id' => $r['id'],
+			'text' => $text,
+		];
 	}
 
-	public function getTextFromId($id){
+	public function getItemFromId($id){
 		$r = $this->model->_Db->select($this->options['table'], $id);
-		if(!$r)
-			return '';
-		return $this->getText($r);
+		if(!$r){
+			return [
+				'id' => null,
+				'text' => '',
+			];
+		}
+		return $this->getItem($r);
 	}
 
 	public function makePattern(array $fields){
@@ -76,26 +95,33 @@ class Base{
 			$where = array_merge($this->options['where'], $where);
 		}
 
-		$q = $this->model->_Db->select_all($this->options['table'], $where, ['limit' => $this->options['limit'], 'raw' => true]);
-		$array = [];
-		if($q){
-			foreach($q as $r) {
-				$arr = [
-					'id' => $r['id'],
-					'text' => $this->getText($r),
-				];
+		return $this->model->_Db->select_all($this->options['table'], $where, ['limit' => $this->options['limit']]);
+	}
 
-				if($is_popup){
-					$arr['fields'] = [];
-					foreach($fields as $f){
-						$arr['fields'][$f] = isset($r[$f]) ? $r[$f] : null;
-					}
+	public function getItemsList($query, $is_popup = false){
+		$q = $this->getList($query, $is_popup);
+		if(!$q)
+			return [];
+
+		$list = [];
+
+		if($is_popup)
+			$fields = $this->options['table-fields'] ?: $this->options['fields'];
+
+		foreach($q as $r){
+			$item = $this->getItem($r);
+
+			if($is_popup){
+				$arr['fields'] = [];
+				foreach($fields as $f){
+					$item['fields'][$f] = isset($r[$f]) ? $r[$f] : null;
 				}
-
-				$array[] = $arr;
 			}
+
+			$list[] = $item;
 		}
-		return $array;
+
+		return $list;
 	}
 
 	protected function makeQuery($query, $fields){

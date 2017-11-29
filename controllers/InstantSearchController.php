@@ -7,18 +7,18 @@ class InstantSearchController extends \Model\Core\Controller {
 
 			if(isset($_GET['text']) or isset($_GET['v'])){
 				if($this->model->getRequest(1)) {
-					$submodule_name = $this->model->getRequest(1);
-					if (file_exists(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $submodule_name . '.php'))
-						require_once(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $submodule_name . '.php');
+					$helper_name = $this->model->getRequest(1);
+					if (file_exists(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $helper_name . '.php'))
+						require_once(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $helper_name . '.php');
 					else
-						$submodule_name = 'Base';
+						$helper_name = 'Base';
 				}else{
-					$submodule_name = 'Base';
+					$helper_name = 'Base';
 				}
 
 				$is_popup = isset($_GET['popup']) ? true : false;
 
-				$submodule_name = '\\Model\\InstantSearch\\' . $submodule_name;
+				$helper_name = '\\Model\\InstantSearch\\' . $helper_name;
 
 				$options = [];
 				if(isset($_GET['table']))
@@ -34,13 +34,13 @@ class InstantSearchController extends \Model\Core\Controller {
 				if(isset($_GET['where']))
 					$options['where'] = json_decode($_GET['where'], true);
 
-				$submodule = new $submodule_name($this->model, $options);
+				$helper = new $helper_name($this->model, $options);
 
 				if(isset($_GET['text'])){
-					$array = $submodule->getList($_GET['text'], $is_popup);
+					$array = $helper->getItemsList($_GET['text'], $is_popup);
 					echo json_encode($array);
 				}else if(isset($_GET['v'])){
-					echo $submodule->getTextFromId($_GET['v']);
+					echo $helper->getItemFromId($_GET['v']);
 				}
 
 				die();
