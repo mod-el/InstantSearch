@@ -610,7 +610,7 @@ function setInstantSearchValue(v, trigger_onchange){
 				}
 			}
 			var firstField = inputs[0];
-			if((v.fill==='undefined' || v.fill[firstField]==='undefined') && instantSearches[name].inputs[firstField]){
+			if((typeof v.fill==='undefined' || typeof v.fill[firstField]==='undefined') && instantSearches[name].inputs[firstField]){
 				instantSearches[name].inputs[firstField].setValue(v.text);
 				if(v.id)
 					markInstantSearch(instantSearches[name].inputs[firstField]);
