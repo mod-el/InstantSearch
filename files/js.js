@@ -22,8 +22,13 @@ function checkInstantSearches(){
 			return;
 
 		var fieldName = el.getAttribute('data-name');
-		if(!fieldName && el.name)
-			fieldName = el.name;
+		if(fieldName){
+			if(!el.name)
+				el.name = fieldName;
+		}else{
+			if(el.name)
+				fieldName = el.name;
+		}
 
 		if(typeof instantSearches[name]==='undefined'){
 			instantSearches[name] = {
@@ -592,8 +597,18 @@ function setInstantSearchValue(v, trigger_onchange){
 	})(this)).then(function(v){
 		var inputs = Object.keys(instantSearches[name].inputs);
 		if(inputs.length>0){
+			if(typeof v.fill!=='undefined' && Object.keys(v.fill).length>0){
+				for(var f in v.fill){
+					if(!v.fill.hasOwnProperty(f) || typeof instantSearches[name].inputs[f]==='undefined')
+						return;
+					var el = instantSearches[name].inputs[f];
+					el.setValue(v.fill[f]);
+					if(el instanceof Element)
+						el.setAttribute('title', v.fill[f]);
+				}
+			}
 			var firstField = inputs[0];
-			if(instantSearches[name].inputs[firstField]){
+			if(v.fill[firstField]==='undefined' && instantSearches[name].inputs[firstField]){
 				instantSearches[name].inputs[firstField].setValue(v.text);
 				if(v.id)
 					markInstantSearch(instantSearches[name].inputs[firstField]);
