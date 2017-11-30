@@ -66,7 +66,7 @@ class Base{
 	}
 
 	public function getItemFromId($id){
-		$r = $this->model->_Db->select($this->options['table'], $id);
+		$r = $id ? $this->model->_Db->select($this->options['table'], $id) : false;
 		if(!$r){
 			return [
 				'id' => null,

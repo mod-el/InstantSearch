@@ -586,12 +586,7 @@ function setInstantSearchValue(v, trigger_onchange){
 				else if(instantSearches[name]['post-function'])
 					post = instantSearches[name]['post-function'].call(field);
 
-				ajax(url, get, post).then(function(text){
-					resolve({
-						'id': v,
-						'text': text
-					});
-				});
+				ajax(url, get, post).then(resolve);
 			}else{
 				resolve(v);
 			}
