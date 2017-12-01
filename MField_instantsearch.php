@@ -31,7 +31,28 @@ class MField_instantsearch extends MField {
 		if($this->options['text-field'] and !isset($attributes['data-fields']))
 			$attributes['data-fields'] = is_array($this->options['text-field']) ? implode(',', $this->options['text-field']) : $this->options['text-field'];
 
-		echo '<input type="text" value="'.entities($this->getValue($lang)).'" '.$this->implodeAttributes($attributes).' />';
+		if(!isset($attributes['only-text'])){
+			$attributes_hidden = [
+				'data-instant-search' => $attributes['data-instant-search'],
+			];
+			if(isset($attributes['onchange'])){
+				$attributes_hidden['onchange'] = $attributes['onchange'];
+				unset($attributes['onchange']);
+			}
+
+			$item = $this->getItem($lang);
+			$text_name = isset($attributes['name']) ? $attributes['name'] : $attributes['data-instant-search'];
+			if(isset($item['fill'][$text_name]))
+				$text = $item['fill'][$text_name];
+			else
+				$text = $item['text'];
+
+			echo '<input type="hidden" value="'.entities($item['id']).'" '.$this->implodeAttributes($attributes_hidden).' />';
+		}else{
+			unset($attributes['only-text']);
+		}
+
+		echo '<input type="text" value="'.entities($text).'" '.$this->implodeAttributes($attributes).' />';
 	}
 
 	public function getMinWidth(){
