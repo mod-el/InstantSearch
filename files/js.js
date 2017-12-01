@@ -13,178 +13,174 @@ Rules:
  */
 
 function checkInstantSearches(){
-	document.querySelectorAll('input[data-instant-search]').forEach(function(el){
-		if(el.getAttribute('data-instant-search-set'))
-			return;
-		if (el.parentNode.offsetParent === null)
-			return;
+	return new Promise(function(resolve){
+		document.querySelectorAll('input[data-instant-search]').forEach(function(el){
+			if(el.getAttribute('data-instant-search-set'))
+				return;
+			if (el.parentNode.offsetParent === null)
+				return;
 
-		var name = el.getAttribute('data-instant-search');
-		if(!name)
-			return;
+			var name = el.getAttribute('data-instant-search');
+			if(!name)
+				return;
 
-		var fieldName = el.getAttribute('data-name');
-		if(fieldName){
-			if(!el.name)
-				el.name = fieldName;
-		}else{
-			if(el.name)
-				fieldName = el.name;
-		}
-
-		if(typeof instantSearches[name]==='undefined'){
-			instantSearches[name] = {
-				'id': null,
-				'table': null,
-				'pattern': null,
-				'fields': {},
-				'table-fields': {},
-				'where': null,
-				'post': null,
-				'post-function': null,
-				'hidden': null,
-				'inputs': {},
-				'values': {}
-			};
-		}
-
-		if(fieldName){
-			instantSearches[name]['inputs'][fieldName] = el;
-		}else{
-			if(el.type.toLowerCase()==='hidden'){
-				if(instantSearches[name]['hidden']===null){
-					instantSearches[name]['hidden'] = el;
-					el.name = name;
-				}else{
-					return;
-				}
+			var fieldName = el.getAttribute('data-name');
+			if(fieldName){
+				if(!el.name)
+					el.name = fieldName;
 			}else{
-				fieldName = name;
+				if(el.name)
+					fieldName = el.name;
+			}
+
+			if(typeof instantSearches[name]==='undefined'){
+				instantSearches[name] = {
+					'id': null,
+					'table': null,
+					'pattern': null,
+					'fields': {},
+					'table-fields': {},
+					'where': null,
+					'post': null,
+					'post-function': null,
+					'hidden': null,
+					'inputs': {},
+					'values': {}
+				};
+			}
+
+			if(fieldName){
 				instantSearches[name]['inputs'][fieldName] = el;
-			}
-		}
-
-		if(el.getAttribute('data-instant-search-id'))
-			instantSearches[name]['id'] = el.getAttribute('data-instant-search-id');
-		if(el.getAttribute('data-table'))
-			instantSearches[name]['table'] = el.getAttribute('data-table');
-		if(el.getAttribute('data-pattern'))
-			instantSearches[name]['pattern'] = el.getAttribute('data-pattern');
-		if(el.getAttribute('data-where'))
-			instantSearches[name]['where'] = el.getAttribute('data-where');
-		if(el.getAttribute('data-fields'))
-			instantSearches[name]['fields'][fieldName] = el.getAttribute('data-fields').split(',');
-		if(el.getAttribute('data-table-fields'))
-			instantSearches[name]['table-fields'][fieldName] = el.getAttribute('data-table-fields').split(',');
-		if(el.getAttribute('data-post'))
-			instantSearches[name]['post'] = el.getAttribute('data-post');
-		if(el.getAttribute('data-post-function')) {
-			instantSearches[name]['post-function'] = (function(code){
-				return function(){
-					eval(code);
+			}else{
+				if(el.type.toLowerCase()==='hidden'){
+					if(instantSearches[name]['hidden']===null){
+						instantSearches[name]['hidden'] = el;
+						el.name = name;
+					}else{
+						return;
+					}
+				}else{
+					fieldName = name;
+					instantSearches[name]['inputs'][fieldName] = el;
 				}
-			})(el.getAttribute('data-post-function'));
-		}
-
-		el.setAttribute('autocomplete', 'off');
-
-		el.addEventListener('keyup', (function(name, fieldName){
-			return function(event){
-				if(event.keyCode===13)
-					return true;
-
-				instantSearch(this, name, fieldName);
 			}
-		})(name, fieldName));
 
-		el.addEventListener('blur', function(){
-			if(this.getAttribute('data-text-before-reset') && this.getValue()===this.getAttribute('data-text-before-reset')){
-				resetInstantSearch(this);
+			if(el.getAttribute('data-instant-search-id'))
+				instantSearches[name]['id'] = el.getAttribute('data-instant-search-id');
+			if(el.getAttribute('data-table'))
+				instantSearches[name]['table'] = el.getAttribute('data-table');
+			if(el.getAttribute('data-pattern'))
+				instantSearches[name]['pattern'] = el.getAttribute('data-pattern');
+			if(el.getAttribute('data-where'))
+				instantSearches[name]['where'] = el.getAttribute('data-where');
+			if(el.getAttribute('data-fields'))
+				instantSearches[name]['fields'][fieldName] = el.getAttribute('data-fields').split(',');
+			if(el.getAttribute('data-table-fields'))
+				instantSearches[name]['table-fields'][fieldName] = el.getAttribute('data-table-fields').split(',');
+			if(el.getAttribute('data-post'))
+				instantSearches[name]['post'] = el.getAttribute('data-post');
+			if(el.getAttribute('data-post-function')) {
+				instantSearches[name]['post-function'] = (function(code){
+					return function(){
+						eval(code);
+					}
+				})(el.getAttribute('data-post-function'));
 			}
-			setTimeout(closeInstantSearch, 300);
+
+			el.setAttribute('autocomplete', 'off');
+
+			el.addEventListener('keyup', (function(name, fieldName){
+				return function(event){
+					if(event.keyCode===13)
+						return true;
+
+					instantSearch(this, name, fieldName);
+				}
+			})(name, fieldName));
+
+			el.addEventListener('blur', function(){
+				if(this.getAttribute('data-text-before-reset') && this.getValue()===this.getAttribute('data-text-before-reset')){
+					resetInstantSearch(this);
+				}
+				setTimeout(closeInstantSearch, 300);
+			});
+
+			if(el.ctxMenu){
+				el.ctxMenu({
+					'Ricerca avanzata': function(){
+						var url = absolute_path+'instant-search';
+						if(instantSearches[name].id)
+							url += '/'+instantSearches[name].id;
+
+						var get = [
+							'popup=1'
+						];
+
+						if(instantSearches[name].table)
+							get.push('table='+encodeURIComponent(instantSearches[name].table));
+						if(instantSearches[name].pattern)
+							get.push('pattern='+encodeURIComponent(instantSearches[name].pattern));
+						if(instantSearches[name].where)
+							get.push('where='+encodeURIComponent(instantSearches[name].where));
+						if(instantSearches[name]['fields'][fieldName])
+							get.push('fields='+encodeURIComponent(instantSearches[name]['fields'][fieldName].join(',')));
+						if(instantSearches[name]['table-fields'][fieldName])
+							get.push('table-fields='+encodeURIComponent(instantSearches[name]['table-fields'][fieldName].join(',')));
+
+						get = get.join('&');
+
+						var post = '';
+						if(instantSearches[name]['post'])
+							post = instantSearches[name]['post'];
+						else if(instantSearches[name]['post-function'])
+							post = instantSearches[name]['post-function'].call(field);
+
+						activeInstantSearch = {
+							'name': name,
+							'field': this,
+							'fieldName': fieldName,
+							'current': -1,
+							'popup': true
+						}
+
+						popupLastSearched = false;
+
+						zkPopup({'url': url, 'get': get, 'post': post}, {'onLoad': popupInstantSearch});
+					}
+				});
+			}
+
+			el.setAttribute('data-instant-search-set', '1');
 		});
 
-		if(el.ctxMenu){
-			el.ctxMenu({
-				'Ricerca avanzata': function(){
-					var url = absolute_path+'instant-search';
-					if(instantSearches[name].id)
-						url += '/'+instantSearches[name].id;
+		for(var name in instantSearches){
+			if(instantSearches[name]['inputs'].length===0){
+				delete instantSearches[name];
+				continue;
+			}
 
-					var get = [
-						'popup=1'
-					];
+			if(instantSearches[name]['hidden']===null){
+				var hidden = document.createElement('input');
+				hidden.type = 'hidden';
+				hidden.name = name;
+				hidden.setAttribute('data-instant-search', name);
+				hidden.setAttribute('data-instant-search-set', '1');
 
-					if(instantSearches[name].table)
-						get.push('table='+encodeURIComponent(instantSearches[name].table));
-					if(instantSearches[name].pattern)
-						get.push('pattern='+encodeURIComponent(instantSearches[name].pattern));
-					if(instantSearches[name].where)
-						get.push('where='+encodeURIComponent(instantSearches[name].where));
-					if(instantSearches[name]['fields'][fieldName])
-						get.push('fields='+encodeURIComponent(instantSearches[name]['fields'][fieldName].join(',')));
-					if(instantSearches[name]['table-fields'][fieldName])
-						get.push('table-fields='+encodeURIComponent(instantSearches[name]['table-fields'][fieldName].join(',')));
+				var firstInput = instantSearches[name]['inputs'][Object.keys(instantSearches[name]['inputs'])[0]];
+				firstInput = firstInput.parentNode.insertBefore(hidden, firstInput);
 
-					get = get.join('&');
+				instantSearches[name]['hidden'] = firstInput;
+			}
 
-					var post = '';
-					if(instantSearches[name]['post'])
-						post = instantSearches[name]['post'];
-					else if(instantSearches[name]['post-function'])
-						post = instantSearches[name]['post-function'].call(field);
-
-					activeInstantSearch = {
-						'name': name,
-						'field': this,
-						'fieldName': fieldName,
-						'current': -1,
-						'popup': true
-					}
-
-					popupLastSearched = false;
-
-					zkPopup({'url': url, 'get': get, 'post': post}, {'onLoad': popupInstantSearch});
-				}
-			});
+			instantSearches[name]['hidden'].setAttribute('data-setvalue-function', 'setInstantSearchValue');
 		}
 
-		el.setAttribute('data-instant-search-set', '1');
+		resolve();
 	});
-
-	for(var name in instantSearches){
-		if(instantSearches[name]['inputs'].length===0){
-			delete instantSearches[name];
-			continue;
-		}
-
-		if(instantSearches[name]['hidden']===null){
-			var hidden = document.createElement('input');
-			hidden.type = 'hidden';
-			hidden.name = name;
-			hidden.setAttribute('data-instant-search', name);
-			hidden.setAttribute('data-instant-search-set', '1');
-
-			var firstInput = instantSearches[name]['inputs'][Object.keys(instantSearches[name]['inputs'])[0]];
-			firstInput = firstInput.parentNode.insertBefore(hidden, firstInput);
-
-			instantSearches[name]['hidden'] = firstInput;
-		}
-
-		instantSearches[name]['hidden'].setAttribute('data-setvalue-function', 'setInstantSearchValue');
-	}
 }
 
 window.addEventListener('load', function(){
-	checkInstantSearches();
-
-	if (typeof MutationObserver !== 'undefined') {
-		var observer = new MutationObserver(function (mutations) {
-			checkInstantSearches();
-		});
-
-		observer.observe(document.body, {"childList": true, "subtree": true});
-	}
+	observeMutations(checkInstantSearches);
 });
 
 function instantSearch(field, name, fieldName){
