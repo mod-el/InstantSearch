@@ -16,7 +16,7 @@ function checkInstantSearches(){
 	document.querySelectorAll('input[data-instant-search]').forEach(function(el){
 		if(el.getAttribute('data-instant-search-set'))
 			return;
-		if (el.offsetParent === null)
+		if (el.parentNode.offsetParent === null)
 			return;
 
 		var name = el.getAttribute('data-instant-search');
@@ -54,6 +54,7 @@ function checkInstantSearches(){
 			if(el.type.toLowerCase()==='hidden'){
 				if(instantSearches[name]['hidden']===null){
 					instantSearches[name]['hidden'] = el;
+					el.name = name;
 				}else{
 					return;
 				}
