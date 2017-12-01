@@ -108,6 +108,7 @@ class Base{
 		if($is_popup)
 			$fields = $this->options['table-fields'] ?: $this->options['fields'];
 
+		$c = 0;
 		foreach($q as $r){
 			$item = $this->getItem($r);
 
@@ -119,6 +120,10 @@ class Base{
 			}
 
 			$list[] = $item;
+
+			$c++;
+			if($c>=$this->options['limit'])
+				break;
 		}
 
 		return $list;
