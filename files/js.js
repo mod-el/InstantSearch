@@ -80,11 +80,7 @@ function checkInstantSearches(){
 			if(el.getAttribute('data-post'))
 				instantSearches[name]['post'] = el.getAttribute('data-post');
 			if(el.getAttribute('data-post-function')) {
-				instantSearches[name]['post-function'] = (function(code){
-					return function(){
-						eval(code);
-					}
-				})(el.getAttribute('data-post-function'));
+				eval('instantSearches[name][\'post-function\'] =  function(){ '+el.getAttribute('data-post-function')+' }');
 			}
 
 			el.setAttribute('autocomplete', 'off');
