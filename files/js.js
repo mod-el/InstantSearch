@@ -14,7 +14,7 @@ Rules:
 
 function checkInstantSearches(){
 	return new Promise(function(resolve){
-		document.querySelectorAll('input[data-instant-search]').forEach(function(el){
+		document.querySelectorAll('[data-instant-search]').forEach(function(el){
 			if(el.getAttribute('data-instant-search-set'))
 				return;
 			if (el.parentNode.offsetParent === null)
