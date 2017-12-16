@@ -1,8 +1,8 @@
-<?php namespace Model\InstantSearch;
+<?php namespace Model\InstantSearch\Fields;
 
 use Model\Form\MField;
 
-class MField_instantsearch extends MField {
+class InstantSearch extends MField {
 	protected function renderWithLang(array $attributes, $lang = false){
 		if(!$this->model->isLoaded('InstantSearch'))
 			$this->model->load('InstantSearch');
@@ -65,16 +65,12 @@ class MField_instantsearch extends MField {
 
 	private function getItem($lang = null){
 		if(isset($this->options['instant-search-id']) and $this->options['instant-search-id']){
-			$helper_name = $this->options['instant-search-id'];
-			if (file_exists(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $helper_name . '.php'))
-				require_once(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $helper_name . '.php');
-			else
+			$helper_name = Autoloader::searchFile('Helper', $this->options['instant-search-id']);
+			if (!$helper_name)
 				$this->model->error('Instant Search error: provided helper name "'.$helper_name.'" does not seem to exist."');
 		}else{
-			$helper_name = 'Base';
+			$helper_name = '\\Model\\InstantSearch\\Base';
 		}
-
-		$helper_name = '\\Model\\InstantSearch\\' . $helper_name;
 
 		$fieldOptions = $this->options;
 		if($fieldOptions['text-field'])

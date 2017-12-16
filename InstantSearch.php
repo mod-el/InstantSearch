@@ -7,6 +7,7 @@ class InstantSearch extends Module {
 	 * Takes advantage of the Popup and ContextMenu modules, if present
 	 *
 	 * @param mixed $options
+	 * @throws \Model\Core\ZkException
 	 */
 	function init($options){
 		if($this->model->moduleExists('ContextMenu') and $this->model->moduleExists('Popup')){
