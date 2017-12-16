@@ -7,18 +7,14 @@ class InstantSearchController extends \Model\Core\Controller {
 
 			if(isset($_GET['text']) or isset($_GET['v'])){
 				if($this->model->getRequest(1)) {
-					$helper_name = $this->model->getRequest(1);
-					if (file_exists(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $helper_name . '.php'))
-						require_once(INCLUDE_PATH . 'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'InstantSearch'.DIRECTORY_SEPARATOR . $helper_name . '.php');
-					else
-						$helper_name = 'Base';
+					$helper_name = Autoloader::searchFile('Helper', $this->model->getRequest(1));
+					if (!$helper_name)
+						$helper_name = '\\Model\\InstantSearch\\Base';
 				}else{
-					$helper_name = 'Base';
+					$helper_name = '\\Model\\InstantSearch\\Base';
 				}
 
 				$is_popup = isset($_GET['popup']) ? true : false;
-
-				$helper_name = '\\Model\\InstantSearch\\' . $helper_name;
 
 				$options = [];
 				if(isset($_GET['table']))
