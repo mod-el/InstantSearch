@@ -1,5 +1,6 @@
 <?php namespace Model\InstantSearch\Fields;
 
+use Model\Core\Autoloader;
 use Model\Form\MField;
 
 class InstantSearch extends MField {

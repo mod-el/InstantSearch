@@ -1,4 +1,6 @@
 <?php
+use Model\Core\Autoloader;
+
 class InstantSearchController extends \Model\Core\Controller {
 	public function index(){
 		try{
