@@ -1,7 +1,9 @@
-<?php
+<?php namespace Model\InstantSearch\Controllers;
+
+use Model\Core\Controller;
 use Model\Core\Autoloader;
 
-class InstantSearchController extends \Model\Core\Controller {
+class InstantSearchController extends Controller {
 	public function index(){
 		try{
 			if(!isset($_GET['v']) and !isset($_GET['text']) and !isset($_GET['popup']))
@@ -54,7 +56,7 @@ class InstantSearchController extends \Model\Core\Controller {
 				else
 					$this->viewOptions['fields'] = ['instant-search-main'];
 			}
-		}catch(Exception $e){
+		}catch(\Exception $e){
 			echo getErr($e);
 			die();
 		}
