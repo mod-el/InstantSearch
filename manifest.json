@@ -11,6 +11,7 @@
 	"js": [
 		"files/js.js"
 	],
+	"assets-position": "foot",
 	"file-types": {
 		"Helper": {
 			"folder": "Helpers",
