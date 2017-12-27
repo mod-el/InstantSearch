@@ -8,6 +8,13 @@ class InstantSearch extends MField {
 		if(!$this->model->isLoaded('InstantSearch'))
 			$this->model->load('InstantSearch');
 
+		$textFieldAttributes = [
+			'name',
+			'class',
+			'style',
+			'data-instant-search',
+		];
+
 		$is_options = [
 			'instant-search-id',
 			'table',
@@ -27,28 +34,32 @@ class InstantSearch extends MField {
 		foreach($is_options as $k){
 			if(isset($this->options[$k]) and $this->options[$k])
 				$attributes['data-'.$k] = is_array($this->options[$k]) ? implode(',', $this->options[$k]) : $this->options[$k];
+			$textFieldAttributes[] = 'data-'.$k;
 		}
 
 		if($this->options['text-field'] and !isset($attributes['data-fields']))
 			$attributes['data-fields'] = is_array($this->options['text-field']) ? implode(',', $this->options['text-field']) : $this->options['text-field'];
 
 		if(!isset($attributes['only-text'])){
-			$attributes_hidden = [
+			$hiddenFieldAttributes = [
 				'data-instant-search' => $attributes['data-instant-search'],
 			];
-			if(isset($attributes['onchange'])){
-				$attributes_hidden['onchange'] = $attributes['onchange'];
-				unset($attributes['onchange']);
+
+			foreach($attributes as $k => $v){
+				if(!in_array($k, $textFieldAttributes)){
+					$hiddenFieldAttributes[$k] = $attributes[$k];
+					unset($attributes[$k]);
+				}
 			}
 
 			$item = $this->getItem($lang);
-			$text_name = isset($attributes['name']) ? $attributes['name'] : $attributes['data-instant-search'];
+			$text_name = isset($attributes['name']) ? $attributes['name'] : $hiddenFieldAttributes['data-instant-search'];
 			if(isset($item['fill'][$text_name]))
 				$text = $item['fill'][$text_name];
 			else
 				$text = $item['text'];
 
-			echo '<input type="hidden" value="'.entities($item['id']).'" '.$this->implodeAttributes($attributes_hidden).' />';
+			echo '<input type="hidden" value="'.entities($item['id']).'" '.$this->implodeAttributes($hiddenFieldAttributes).' />';
 		}else{
 			unset($attributes['only-text']);
 		}
