@@ -618,6 +618,12 @@ function setInstantSearchValue(v, trigger_onchange){
 function resetAllInstantSearches(){
 	instantSearches = {};
 	activeInstantSearch = false;
+	document.querySelectorAll('[data-instant-search-set]').forEach(function(el){
+		el.removeAttribute('data-instant-search-set');
+		if(el.type.toLowerCase()==='hidden' && el.getAttribute('name'))
+			el.removeAttribute('name');
+	});
+	checkInstantSearches();
 }
 
 function popupInstantSearch(){
