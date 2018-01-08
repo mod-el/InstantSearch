@@ -64,6 +64,12 @@ class InstantSearch extends MField {
 			unset($attributes['only-text']);
 		}
 
+		if($this->getValue($lang)){
+			$attributes['readonly'] = '';
+			$attributes['onclick'] = 'unmarkInstantSearch(this)';
+			$attributes['class'] = isset($attributes['class']) ? $attributes['class'].' model-instant-search-marked' : 'model-instant-search-marked';
+		}
+
 		echo '<input type="text" value="'.entities($text).'" '.$this->implodeAttributes($attributes).' />';
 	}
 
