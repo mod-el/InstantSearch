@@ -40,7 +40,7 @@ class InstantSearchController extends Controller {
 					$array = $helper->getItemsList($_GET['text'], $is_popup);
 					echo json_encode($array);
 				}else if(isset($_GET['v'])){
-					echo json_encode($helper->getItemFromId($_GET['v']));
+					echo json_encode($helper->getItemFromId($_GET['v'] ?: null));
 				}
 
 				die();
