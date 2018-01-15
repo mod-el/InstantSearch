@@ -95,7 +95,7 @@ function checkInstantSearches(){
 			})(name, fieldName));
 
 			el.addEventListener('blur', function(){
-				if(this.getAttribute('data-text-before-reset') && this.getValue()===this.getAttribute('data-text-before-reset')){
+				if(this.getAttribute('data-text-before-reset') && this.getValue(true)===this.getAttribute('data-text-before-reset')){
 					resetInstantSearch(this);
 				}
 				setTimeout(closeInstantSearch, 300);
@@ -175,7 +175,7 @@ function checkInstantSearches(){
 	});
 }
 
-window.addEventListener('load', function(){
+window.addEventListener('DOMContentLoaded', function(){
 	observeMutations(checkInstantSearches);
 });
 
@@ -513,13 +513,13 @@ function unmarkInstantSearch(field){
 		f.onclick = function(){ return true };
 	});
 
-	field.setAttribute('data-text-before-reset', field.getValue());
+	field.setAttribute('data-text-before-reset', field.getValue(true));
 
 	field.focus();
 	field.select();
 
 	if(instantSearches[name].hidden){
-		field.setAttribute('data-id-before-reset', instantSearches[name].hidden.getValue());
+		field.setAttribute('data-id-before-reset', instantSearches[name].hidden.getValue(true));
 		instantSearches[name].hidden.value = '';
 		triggerOnChange(instantSearches[name].hidden);
 	}
@@ -546,7 +546,7 @@ function setInstantSearchValue(v, trigger_onchange){
 	if(typeof instantSearches[name]==='undefined')
 		return false;
 
-	new Promise((function(field){
+	return new Promise((function(field){
 		return function(resolve){
 			if(typeof v!=='object'){
 				var url = absolute_path+'instant-search';
@@ -630,10 +630,10 @@ function popupInstantSearch(){
 	if(!_('instant-search-value'))
 		return false;
 
-	var url = _('instant-search-url').getValue();
-	var get = _('instant-search-get').getValue();
-	var post = _('instant-search-post').getValue();
-	var v = _('instant-search-value').getValue();
+	var url = _('instant-search-url').getValue(true);
+	var get = _('instant-search-get').getValue(true);
+	var post = _('instant-search-post').getValue(true);
+	var v = _('instant-search-value').getValue(true);
 
 	if(v===popupLastSearched)
 		return false;
@@ -661,7 +661,7 @@ function popupInstantSearch(){
 			return false;
 		}
 
-		if(_('instant-search-value').getValue()!==popupLastSearched)
+		if(_('instant-search-value').getValue(true)!==popupLastSearched)
 			return false;
 
 		activeInstantSearch['current'] = -1;
