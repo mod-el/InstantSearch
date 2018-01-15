@@ -175,7 +175,7 @@ function checkInstantSearches(){
 	});
 }
 
-window.addEventListener('load', function(){
+window.addEventListener('DOMContentLoaded', function(){
 	observeMutations(checkInstantSearches);
 });
 
