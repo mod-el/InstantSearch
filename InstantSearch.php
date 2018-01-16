@@ -9,7 +9,7 @@ class InstantSearch extends Module {
 	 * @param mixed $options
 	 * @throws \Model\Core\Exception
 	 */
-	function init($options){
+	function init(array $options){
 		if($this->model->moduleExists('ContextMenu') and $this->model->moduleExists('Popup')){
 			if(!$this->model->isLoaded('ContextMenu'))
 				$this->model->load('ContextMenu');
@@ -25,7 +25,7 @@ class InstantSearch extends Module {
 	 * @param string $rule
 	 * @return array
 	 */
-	public function getController(array $request, $rule){
+	public function getController(array $request, string $rule){
 		return [
 			'controller'=>'InstantSearch',
 		];

@@ -8,7 +8,8 @@ class Config extends Module_Config {
 	 *
 	 * @return array
 	 */
-	public function getRules(){
+	public function getRules(): array
+	{
 		return [
 			'rules' => [
 				'instant-search' => 'instant-search',
