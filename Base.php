@@ -70,7 +70,7 @@ class Base
 		];
 	}
 
-	public function getItemFromId(int $id): array
+	public function getItemFromId($id): array
 	{
 		$r = $id ? $this->model->_Db->select($this->options['table'], $id) : false;
 		if (!$r) {
