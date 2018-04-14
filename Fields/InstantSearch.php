@@ -1,9 +1,9 @@
 <?php namespace Model\InstantSearch\Fields;
 
 use Model\Core\Autoloader;
-use Model\Form\MField;
+use Model\Form\Field;
 
-class InstantSearch extends MField
+class InstantSearch extends Field
 {
 	protected function renderWithLang(array $attributes, string $lang = null)
 	{
