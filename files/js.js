@@ -543,7 +543,7 @@ function resetInstantSearch(field) {
 	markInstantSearch(field);
 }
 
-function setInstantSearchValue(v, trigger_onchange) {
+function setInstantSearchValue(v) {
 	var name = this.getAttribute('data-instant-search');
 	if (typeof instantSearches[name] === 'undefined')
 		return false;
@@ -607,13 +607,8 @@ function setInstantSearchValue(v, trigger_onchange) {
 			}
 		}
 
-		if (instantSearches[name].hidden) {
-			var currentValue = instantSearches[name].hidden.value;
+		if (instantSearches[name].hidden)
 			instantSearches[name].hidden.value = v.id;
-
-			if (trigger_onchange && v.id != currentValue)
-				triggerOnChange(instantSearches[name].hidden);
-		}
 	});
 }
 
