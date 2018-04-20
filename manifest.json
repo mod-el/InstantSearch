@@ -1,9 +1,9 @@
 {
 	"name": "InstantSearch",
 	"description": "A field that allows to do instant searches while typing",
-	"version": "1.4.0",
+	"version": "1.4.1",
 	"dependencies": {
-		"FrontEnd": ">=1.1.0",
+		"FrontEnd": ">=1.1.1",
 		"Form": ">=1.4.3"
 	},
 	"css": [
