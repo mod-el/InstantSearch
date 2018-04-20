@@ -463,11 +463,11 @@ function setInstantSearch(name, field, res) {
 	if (typeof instantSearches[name] === 'undefined')
 		return false;
 
+	var promises = [];
+
 	var hidden = instantSearches[name].hidden;
-	if (hidden) {
-		hidden.value = res.id;
-		triggerOnChange(hidden);
-	}
+	if (hidden)
+		promises.push(hidden.setValue(res.id));
 
 	var fieldName = field.getAttribute('data-name');
 	if (!fieldName && field.name)
@@ -484,7 +484,7 @@ function setInstantSearch(name, field, res) {
 		if (!res.fill.hasOwnProperty(f) || typeof instantSearches[name].inputs[f] === 'undefined')
 			return;
 		var el = instantSearches[name].inputs[f];
-		el.setValue(res.fill[f]);
+		promises.push(el.setValue(res.fill[f]));
 		if (el instanceof Element)
 			el.setAttribute('title', res.fill[f]);
 	}
@@ -494,6 +494,8 @@ function setInstantSearch(name, field, res) {
 			return;
 		markInstantSearch(instantSearches[name].inputs[f]);
 	});
+
+	return Promise.all(promises);
 }
 
 function markInstantSearch(field) {
@@ -522,8 +524,7 @@ function unmarkInstantSearch(field) {
 
 	if (instantSearches[name].hidden) {
 		field.setAttribute('data-id-before-reset', instantSearches[name].hidden.getValue(true));
-		instantSearches[name].hidden.value = '';
-		triggerOnChange(instantSearches[name].hidden);
+		instantSearches[name].hidden.setValue('');
 	}
 }
 
@@ -532,10 +533,8 @@ function resetInstantSearch(field) {
 	if (typeof instantSearches[name] === 'undefined')
 		return false;
 
-	if (instantSearches[name].hidden) {
-		instantSearches[name].hidden.value = field.getAttribute('data-id-before-reset');
-		triggerOnChange(instantSearches[name].hidden);
-	}
+	if (instantSearches[name].hidden)
+		instantSearches[name].hidden.setValue(field.getAttribute('data-id-before-reset'));
 
 	field.removeAttribute('data-text-before-reset');
 	field.removeAttribute('data-id-before-reset');

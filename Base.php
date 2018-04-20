@@ -103,7 +103,7 @@ class Base
 			$where = array_merge($this->options['where'], $where);
 		}
 
-		return $this->model->_Db->select_all($this->options['table'], $where, ['limit' => $this->options['limit']]);
+		return $this->model->_Db->select_all($this->options['table'], $where, ['limit' => $this->options['limit'], 'stream' => false]);
 	}
 
 	public function getItemsList(string $query, bool $is_popup = false): array
