@@ -467,7 +467,7 @@ function setInstantSearch(name, field, res) {
 
 	var hidden = instantSearches[name].hidden;
 	if (hidden)
-		promises.push(hidden.setValue(res.id));
+		promises.push(hidden.setValue(res.id, true, false));
 
 	var fieldName = field.getAttribute('data-name');
 	if (!fieldName && field.name)
@@ -524,7 +524,7 @@ function unmarkInstantSearch(field) {
 
 	if (instantSearches[name].hidden) {
 		field.setAttribute('data-id-before-reset', instantSearches[name].hidden.getValue(true));
-		instantSearches[name].hidden.setValue('');
+		instantSearches[name].hidden.setValue('', false, false);
 	}
 }
 
