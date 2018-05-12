@@ -176,7 +176,7 @@ function checkInstantSearches() {
 }
 
 window.addEventListener('DOMContentLoaded', function () {
-	observeMutations(checkInstantSearches);
+	onHtmlChange(checkInstantSearches);
 });
 
 function instantSearch(field, name, fieldName) {
