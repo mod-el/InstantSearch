@@ -45,7 +45,8 @@ function checkInstantSearches() {
 					'post-function': null,
 					'hidden': null,
 					'inputs': {},
-					'values': {}
+					'values': {},
+					'initial-value': null
 				};
 			}
 
@@ -79,6 +80,8 @@ function checkInstantSearches() {
 				instantSearches[name]['table-fields'][fieldName] = el.getAttribute('data-table-fields').split(',');
 			if (el.getAttribute('data-post'))
 				instantSearches[name]['post'] = el.getAttribute('data-post');
+			if (el.getAttribute('data-instant-search-value'))
+				instantSearches[name]['initial-value'] = el.getAttribute('data-instant-search-value');
 			if (el.getAttribute('data-post-function')) {
 				eval('instantSearches[name][\'post-function\'] =  function(){ ' + el.getAttribute('data-post-function') + ' }');
 			}
@@ -150,6 +153,7 @@ function checkInstantSearches() {
 		});
 
 		for (var name in instantSearches) {
+			if (!instantSearches.hasOwnProperty(name)) continue;
 			if (instantSearches[name]['inputs'].length === 0) {
 				delete instantSearches[name];
 				continue;
@@ -168,7 +172,15 @@ function checkInstantSearches() {
 				instantSearches[name]['hidden'] = firstInput;
 			}
 
+			if (!instantSearches[name]['hidden'].hasAttribute('name'))
+				instantSearches[name]['hidden'].name = name;
+
 			instantSearches[name]['hidden'].setAttribute('data-setvalue-function', 'setInstantSearchValue');
+
+			if (instantSearches[name]['initial-value'] !== null) {
+				instantSearches[name]['hidden'].setValue(instantSearches[name]['initial-value']);
+				instantSearches[name]['initial-value'] = null;
+			}
 		}
 
 		resolve();
