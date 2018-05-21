@@ -49,7 +49,7 @@ class Base
 			return $default;
 
 		if ($this->options['pattern'] === null) {
-			if (!$this->options['fields'])
+			if (!$this->options['fields'] and !$this->options['fill'])
 				return $default;
 
 			$this->options['pattern'] = $this->makePattern($this->getTotalFields());
@@ -74,6 +74,8 @@ class Base
 		if ($this->options['fill']) {
 			$item['fill'] = [];
 			foreach ($this->options['fill'] as $f => $fields_keys) {
+				if (!is_array($fields_keys))
+					$fields_keys = [$fields_keys];
 				$item['fill'][$f] = [];
 				foreach ($fields_keys as $k)
 					$item['fill'][$f][] = $r[$k] ?? '';
@@ -191,8 +193,11 @@ class Base
 	{
 		$totalFields = [];
 		if ($this->options['fill']) {
-			foreach ($this->options['fill'] as $fields)
+			foreach ($this->options['fill'] as $fields) {
+				if (!is_array($fields))
+					$fields = [$fields];
 				$totalFields = array_merge($totalFields, $fields);
+			}
 		}
 		return array_unique($totalFields);
 	}
