@@ -16,10 +16,12 @@ class Base
 		$this->options = array_merge([
 			'table' => null,
 			'fields' => null,
+			'id-field' => 'id',
 			'table-fields' => null,
 			'pattern' => null,
 			'where' => [],
 			'limit' => 200,
+			'fill' => null,
 		], $options);
 
 		$this->init();
@@ -39,7 +41,7 @@ class Base
 		}
 
 		$default = [
-			'id' => $r['id'],
+			'id' => $r[$this->options['id-field']] ?? null,
 			'text' => '',
 		];
 
@@ -50,7 +52,7 @@ class Base
 			if (!$this->options['fields'])
 				return $default;
 
-			$this->options['pattern'] = $this->makePattern($this->options['fields']);
+			$this->options['pattern'] = $this->makePattern($this->getTotalFields());
 		}
 
 		$text = $this->options['pattern'];
@@ -64,10 +66,22 @@ class Base
 			$text = str_replace('[:' . $f . ']', $value, $text);
 		}
 
-		return [
-			'id' => $r['id'],
+		$item = [
+			'id' => $r[$this->options['id-field']],
 			'text' => $text,
 		];
+
+		if ($this->options['fill']) {
+			$item['fill'] = [];
+			foreach ($this->options['fill'] as $f => $fields_keys) {
+				$item['fill'][$f] = [];
+				foreach ($fields_keys as $k)
+					$item['fill'][$f][] = $r[$k] ?? '';
+				$item['fill'][$f] = implode(' ', array_filter($item['fill'][$f]));
+			}
+		}
+
+		return $item;
 	}
 
 	public function getItemFromId($id): array
@@ -99,11 +113,16 @@ class Base
 			return [];
 
 		$where = $this->makeQuery($query, $fields);
-		if ($this->options['where']) {
+		if ($this->options['where'])
 			$where = array_merge($this->options['where'], $where);
-		}
 
-		return $this->model->_Db->select_all($this->options['table'], $where, ['limit' => $this->options['limit'], 'stream' => false]);
+		$qryOptions = [
+			'limit' => $this->options['limit'],
+			'stream' => false,
+			'fields' => $this->getTotalFields(true),
+		];
+
+		return $this->model->_Db->select_all($this->options['table'], $where, $qryOptions);
 	}
 
 	public function getItemsList(string $query, bool $is_popup = false): array
@@ -158,5 +177,23 @@ class Base
 			$arr[] = [$c, 'REGEXP', '(^|[^a-z0-9])' . $word];
 		}
 		$where[] = ['operator' => 'OR', 'sub' => $arr];
+	}
+
+	private function getTotalFields(bool $includeId = false): array
+	{
+		$totalFields = array_merge($this->options['fields'] ?: [], $this->getFieldsFromFillOption());
+		if ($includeId)
+			$totalFields[] = $this->options['id-field'];
+		return array_unique($totalFields);
+	}
+
+	private function getFieldsFromFillOption(): array
+	{
+		$totalFields = [];
+		if ($this->options['fill']) {
+			foreach ($this->options['fill'] as $fields)
+				$totalFields = array_merge($totalFields, $fields);
+		}
+		return array_unique($totalFields);
 	}
 }

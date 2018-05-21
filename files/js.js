@@ -20,17 +20,24 @@ function checkInstantSearches() {
 			if (el.parentNode.offsetParent === null)
 				return;
 
-			var name = el.getAttribute('data-instant-search');
+			let name = el.getAttribute('data-instant-search');
 			if (!name)
 				return;
 
-			var fieldName = el.getAttribute('data-name');
+			let fieldName = el.getAttribute('data-name');
 			if (fieldName) {
 				if (!el.name)
 					el.name = fieldName;
 			} else {
-				if (el.name)
+				if (el.name) {
 					fieldName = el.name;
+				} else if (el.type.toLowerCase() !== 'hidden') {
+					let n = 0;
+					while (document.querySelector('[name="' + name + '-text-' + n + '"]'))
+						n++;
+					fieldName = name + '-text-' + n;
+					el.name = fieldName;
+				}
 			}
 
 			if (typeof instantSearches[name] === 'undefined') {
@@ -50,20 +57,15 @@ function checkInstantSearches() {
 				};
 			}
 
-			if (fieldName) {
-				instantSearches[name]['inputs'][fieldName] = el;
-			} else {
-				if (el.type.toLowerCase() === 'hidden') {
-					if (instantSearches[name]['hidden'] === null) {
-						instantSearches[name]['hidden'] = el;
-						el.name = name;
-					} else {
-						return;
-					}
+			if (el.type.toLowerCase() === 'hidden') {
+				if (instantSearches[name]['hidden'] === null) {
+					instantSearches[name]['hidden'] = el;
+					el.name = name;
 				} else {
-					fieldName = name;
-					instantSearches[name]['inputs'][fieldName] = el;
+					return;
 				}
+			} else {
+				instantSearches[name]['inputs'][fieldName] = el;
 			}
 
 			if (el.getAttribute('data-instant-search-id'))
@@ -203,7 +205,7 @@ function instantSearch(field, name, fieldName) {
 
 	instantSearches[name].values[fieldName] = field.value; // Remember this as the last searched thing
 
-	var minLength = 1;
+	let minLength = 1;
 	if (field.getAttribute('data-min-length'))
 		minLength = parseInt(field.getAttribute('data-min-length'));
 
@@ -271,6 +273,8 @@ function instantSearch(field, name, fieldName) {
 		get.push('where=' + encodeURIComponent(instantSearches[name].where));
 	if (instantSearches[name]['fields'][fieldName])
 		get.push('fields=' + encodeURIComponent(instantSearches[name]['fields'][fieldName].join(',')));
+	if (instantSearches[name]['fields'] && Object.keys(instantSearches[name]['fields']).length > 1)
+		get.push('fill=' + encodeURIComponent(JSON.stringify(instantSearches[name]['fields'])));
 
 	get = get.join('&');
 
