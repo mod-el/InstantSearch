@@ -581,9 +581,11 @@ function setInstantSearchValue(v) {
 				if (instantSearches[name].where)
 					get.push('where=' + encodeURIComponent(instantSearches[name].where));
 
-				var inputs = Object.keys(instantSearches[name]['fields']);
-				if (inputs.length > 0) {
-					var firstField = inputs[0];
+				let inputs = Object.keys(instantSearches[name]['fields']);
+				if (inputs.length > 1) {
+					get.push('fill=' + encodeURIComponent(JSON.stringify(instantSearches[name]['fields'])));
+				} else if (inputs.length > 0) {
+					let firstField = inputs[0];
 					if (instantSearches[name]['fields'][firstField])
 						get.push('fields=' + encodeURIComponent(instantSearches[name]['fields'][firstField].join(',')));
 				}

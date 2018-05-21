@@ -21,6 +21,7 @@ class InstantSearch extends Field
 			'instant-search-id',
 			'table',
 			'pattern',
+			'id-field',
 			'fields',
 			'table-fields',
 			'where',
@@ -44,6 +45,8 @@ class InstantSearch extends Field
 		if ($this->options['text-field'] and !isset($attributes['data-fields']))
 			$attributes['data-fields'] = is_array($this->options['text-field']) ? implode(',', $this->options['text-field']) : $this->options['text-field'];
 
+		$item = $this->getItem($lang);
+
 		if (!isset($attributes['only-text'])) {
 			$hiddenFieldAttributes = [
 				'data-instant-search' => $attributes['data-instant-search'],
@@ -56,25 +59,14 @@ class InstantSearch extends Field
 				}
 			}
 
-			$item = $this->getItem($lang);
-			$text_name = isset($attributes['name']) ? $attributes['name'] : $hiddenFieldAttributes['data-instant-search'];
-			if (isset($item['fill'][$text_name]))
-				$text = $item['fill'][$text_name];
-			else
-				$text = $item['text'];
-
-			echo '<input type="hidden" value="' . entities($item['id']) . '" ' . $this->implodeAttributes($hiddenFieldAttributes) . ' />';
+			echo '<input type="hidden" data-instant-search-value="' . entities($item['id']) . '" ' . $this->implodeAttributes($hiddenFieldAttributes) . ' />';
 		} else {
+			if ($item['id'])
+				$attributes['data-instant-search-value'] = $item['id'];
 			unset($attributes['only-text']);
 		}
 
-		if ($this->getValue($lang)) {
-			$attributes['readonly'] = '';
-			$attributes['onclick'] = 'unmarkInstantSearch(this)';
-			$attributes['class'] = isset($attributes['class']) ? $attributes['class'] . ' model-instant-search-marked' : 'model-instant-search-marked';
-		}
-
-		echo '<input type="text" value="' . entities($text) . '" ' . $this->implodeAttributes($attributes) . ' />';
+		echo '<input type="text" ' . $this->implodeAttributes($attributes) . ' />';
 	}
 
 	public function getMinWidth(): int
