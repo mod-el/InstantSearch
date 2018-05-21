@@ -27,6 +27,8 @@ class InstantSearchController extends Controller
 					$options['table'] = $_GET['table'];
 				if (isset($_GET['fields']))
 					$options['fields'] = explode(',', $_GET['fields']);
+				if (isset($_GET['id-field']))
+					$options['id-field'] = $_GET['id-field'];
 				if (isset($_GET['table-fields']))
 					$options['table-fields'] = explode(',', $_GET['table-fields']);
 				if (isset($_GET['pattern']))
@@ -35,6 +37,8 @@ class InstantSearchController extends Controller
 					$options['limit'] = $_GET['limit'];
 				if (isset($_GET['where']))
 					$options['where'] = json_decode($_GET['where'], true);
+				if (isset($_GET['fill']))
+					$options['fill'] = json_decode($_GET['fill'], true);
 
 				$helper = new $helper_name($this->model, $options);
 

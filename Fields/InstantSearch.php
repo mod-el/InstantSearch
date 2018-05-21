@@ -39,6 +39,8 @@ class InstantSearch extends Field
 			$textFieldAttributes[] = 'data-' . $k;
 		}
 
+		if ($this->options['id-field'] and !isset($attributes['data-id-field']))
+			$attributes['data-id-field'] = $this->options['id-field'];
 		if ($this->options['text-field'] and !isset($attributes['data-fields']))
 			$attributes['data-fields'] = is_array($this->options['text-field']) ? implode(',', $this->options['text-field']) : $this->options['text-field'];
 
