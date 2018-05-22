@@ -15,6 +15,7 @@ class InstantSearch extends Field
 			'class',
 			'style',
 			'data-instant-search',
+			'text-name',
 		];
 
 		$is_options = [
@@ -60,6 +61,10 @@ class InstantSearch extends Field
 			}
 
 			echo '<input type="hidden" data-instant-search-value="' . entities($item['id']) . '" ' . $this->implodeAttributes($hiddenFieldAttributes) . ' />';
+			if (isset($attributes['text-name'])) {
+				$attributes['name'] = $this->wrapName($attributes['text-name']);
+				unset($attributes['text-name']);
+			}
 		} else {
 			if ($item['id'])
 				$attributes['data-instant-search-value'] = $item['id'];
