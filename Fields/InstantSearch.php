@@ -36,8 +36,13 @@ class InstantSearch extends Field
 		}
 
 		foreach ($is_options as $k) {
-			if (isset($this->options[$k]) and $this->options[$k])
-				$attributes['data-' . $k] = is_array($this->options[$k]) ? implode(',', $this->options[$k]) : $this->options[$k];
+			if (isset($this->options[$k]) and $this->options[$k]) {
+				if (is_array($this->options[$k])) {
+					$attributes['data-' . $k] = $k === 'where' ? json_encode($this->options[$k]) : implode(',', $this->options[$k]);
+				} else {
+					$attributes['data-' . $k] = $this->options[$k];
+				}
+			}
 			$textFieldAttributes[] = 'data-' . $k;
 		}
 
