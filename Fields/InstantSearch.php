@@ -14,6 +14,7 @@ class InstantSearch extends Field
 			'name',
 			'class',
 			'style',
+			'placeholder',
 			'data-instant-search',
 			'text-name',
 		];
