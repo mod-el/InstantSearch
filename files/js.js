@@ -540,7 +540,7 @@ function unmarkInstantSearch(field) {
 
 	if (instantSearches[name].hidden) {
 		field.setAttribute('data-id-before-reset', instantSearches[name].hidden.getValue(true));
-		instantSearches[name].hidden.setValue('', false, false);
+		instantSearches[name].hidden.setValue('', true, false);
 	}
 }
 
