@@ -14,6 +14,7 @@ Rules:
 
 function checkInstantSearches() {
 	return new Promise(function (resolve) {
+		var instantSearchesCreated = [];
 		document.querySelectorAll('[data-instant-search]').forEach(function (el) {
 			if (el.getAttribute('data-instant-search-set'))
 				return;
@@ -40,6 +41,7 @@ function checkInstantSearches() {
 				}
 			}
 
+			instantSearchesCreated.push(name);
 			if (typeof instantSearches[name] === 'undefined') {
 				instantSearches[name] = {
 					'id': null,
@@ -149,11 +151,10 @@ function checkInstantSearches() {
 			el.setAttribute('data-instant-search-set', '1');
 		});
 
-		for (var name in instantSearches) {
-			if (!instantSearches.hasOwnProperty(name)) continue;
+		instantSearchesCreated.forEach(function (name) {
 			if (instantSearches[name]['inputs'].length === 0) {
 				delete instantSearches[name];
-				continue;
+				return;
 			}
 
 			if (instantSearches[name]['hidden'].length === 0) {
@@ -198,7 +199,7 @@ function checkInstantSearches() {
 				instantSearches[name]['hidden'].setValue(instantSearches[name]['initial-value']);
 				instantSearches[name]['initial-value'] = null;
 			}
-		}
+		});
 
 		resolve();
 	});
