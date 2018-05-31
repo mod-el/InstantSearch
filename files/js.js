@@ -50,7 +50,7 @@ function checkInstantSearches() {
 					'where': null,
 					'post': null,
 					'post-function': null,
-					'hidden': null,
+					'hidden': [],
 					'inputs': {},
 					'values': {},
 					'initial-value': null
@@ -58,12 +58,7 @@ function checkInstantSearches() {
 			}
 
 			if (el.type.toLowerCase() === 'hidden') {
-				if (instantSearches[name]['hidden'] === null) {
-					instantSearches[name]['hidden'] = el;
-					el.name = name;
-				} else {
-					return;
-				}
+				instantSearches[name]['hidden'].push(el);
 			} else {
 				instantSearches[name]['inputs'][fieldName] = el;
 			}
@@ -161,7 +156,7 @@ function checkInstantSearches() {
 				continue;
 			}
 
-			if (instantSearches[name]['hidden'] === null) {
+			if (instantSearches[name]['hidden'].length === 0) {
 				var hidden = document.createElement('input');
 				hidden.type = 'hidden';
 				hidden.name = name;
@@ -172,6 +167,26 @@ function checkInstantSearches() {
 				firstInput = firstInput.parentNode.insertBefore(hidden, firstInput);
 
 				instantSearches[name]['hidden'] = firstInput;
+			} else {
+				var inputFound = false;
+				instantSearches[name]['hidden'].some(function (input) {
+					if (!input.name) {
+						inputFound = input;
+						return true;
+					}
+					return false;
+				});
+				if (!inputFound)
+					inputFound = instantSearches[name]['hidden'][0];
+
+				instantSearches[name]['hidden'].forEach(function (input) {
+					if (input !== inputFound && input.name)
+						instantSearches[name]['inputs'][input.name] = input;
+				});
+
+				if (!inputFound.name)
+					inputFound.name = name;
+				instantSearches[name]['hidden'] = inputFound;
 			}
 
 			if (!instantSearches[name]['hidden'].hasAttribute('name'))
