@@ -41,7 +41,8 @@ function checkInstantSearches() {
 				}
 			}
 
-			instantSearchesCreated.push(name);
+			if (instantSearchesCreated.indexOf(name) === -1)
+				instantSearchesCreated.push(name);
 			if (typeof instantSearches[name] === 'undefined') {
 				instantSearches[name] = {
 					'id': null,
