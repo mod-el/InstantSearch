@@ -37,16 +37,20 @@ class InstantSearchController extends Controller
 					$options['limit'] = $_GET['limit'];
 				if (isset($_GET['where']))
 					$options['where'] = json_decode($_GET['where'], true);
+				if (isset($_GET['wrap']))
+					$options['wrap'] = $_GET['wrap'];
 				if (isset($_GET['fill']))
 					$options['fill'] = json_decode($_GET['fill'], true);
 
 				$helper = new $helper_name($this->model, $options);
 
 				if (isset($_GET['text'])) {
-					$array = $helper->getItemsList($_GET['text'], $is_popup);
+					$array = array_map(function ($row) use ($options) {
+						return $this->wrapFill($row, $options['wrap'] ?? null);
+					}, $helper->getItemsList($_GET['text'], $is_popup));
 					echo json_encode($array);
 				} else if (isset($_GET['v'])) {
-					echo json_encode($helper->getItemFromId($_GET['v'] ?: null));
+					echo json_encode($this->wrapFill($helper->getItemFromId($_GET['v'] ?: null), $options['wrap'] ?? null));
 				}
 
 				die();
@@ -66,5 +70,20 @@ class InstantSearchController extends Controller
 			echo getErr($e);
 			die();
 		}
+	}
+
+	private function wrapFill($row, string $wrap = null)
+	{
+		if (!is_array($row) or !isset($row['fill']) or !$wrap)
+			return $row;
+
+		$newFill = [];
+		foreach ($row['fill'] as $k => $v) {
+			$k = str_replace('[name]', $k, $wrap);
+			$newFill[$k] = $v;
+		}
+		$row['fill'] = $newFill;
+
+		return $row;
 	}
 }

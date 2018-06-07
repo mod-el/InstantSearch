@@ -56,7 +56,8 @@ function checkInstantSearches() {
 					'hidden': [],
 					'inputs': {},
 					'values': {},
-					'initial-value': null
+					'initial-value': null,
+					'wrap': null
 				};
 			}
 
@@ -80,6 +81,8 @@ function checkInstantSearches() {
 				instantSearches[name]['table-fields'][fieldName] = el.getAttribute('data-table-fields').split(',');
 			if (el.getAttribute('data-post'))
 				instantSearches[name]['post'] = el.getAttribute('data-post');
+			if (el.getAttribute('data-wrap'))
+				instantSearches[name]['wrap'] = el.getAttribute('data-wrap');
 			if (el.getAttribute('data-instant-search-value'))
 				instantSearches[name]['initial-value'] = el.getAttribute('data-instant-search-value');
 			if (el.getAttribute('data-post-function')) {
@@ -288,6 +291,8 @@ function instantSearch(field, name, fieldName) {
 		get.push('pattern=' + encodeURIComponent(instantSearches[name].pattern));
 	if (instantSearches[name].where)
 		get.push('where=' + encodeURIComponent(instantSearches[name].where));
+	if (instantSearches[name].wrap)
+		get.push('wrap=' + encodeURIComponent(instantSearches[name].wrap));
 	if (instantSearches[name]['fields'][fieldName])
 		get.push('fields=' + encodeURIComponent(instantSearches[name]['fields'][fieldName].join(',')));
 	if (instantSearches[name]['fields'] && Object.keys(instantSearches[name]['fields']).length > 1)
@@ -597,6 +602,8 @@ function setInstantSearchValue(v) {
 					get.push('pattern=' + encodeURIComponent(instantSearches[name].pattern));
 				if (instantSearches[name].where)
 					get.push('where=' + encodeURIComponent(instantSearches[name].where));
+				if (instantSearches[name].wrap)
+					get.push('wrap=' + encodeURIComponent(instantSearches[name].wrap));
 
 				let inputs = Object.keys(instantSearches[name]['fields']);
 				if (inputs.length > 1) {
