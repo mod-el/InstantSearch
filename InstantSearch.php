@@ -33,4 +33,16 @@ class InstantSearch extends Module
 			'controller' => 'InstantSearch',
 		];
 	}
+
+	/**
+	 * Returns a security token, mandatory to send when not using a helper
+	 *
+	 * @param string $table
+	 * @return string
+	 */
+	public function getToken(string $table): string
+	{
+		$token = $this->model->_RandToken->getToken('Form');
+		return sha1($table . $token);
+	}
 }

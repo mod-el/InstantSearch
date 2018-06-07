@@ -39,6 +39,8 @@ class InstantSearchController extends Controller
 					$options['where'] = json_decode($_GET['where'], true);
 				if (isset($_GET['wrap']))
 					$options['wrap'] = $_GET['wrap'];
+				if (isset($_GET['token']))
+					$options['token'] = $_GET['token'];
 				if (isset($_GET['fill']))
 					$options['fill'] = json_decode($_GET['fill'], true);
 
