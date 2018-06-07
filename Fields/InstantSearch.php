@@ -77,6 +77,12 @@ class InstantSearch extends Field
 			unset($attributes['only-text']);
 		}
 
+		if (isset($attributes['data-instant-search-id']) and $this->form and $this->form->options['wrap-names'])
+			$attributes['data-wrap'] = $this->form->options['wrap-names'];
+
+		if (isset($attributes['data-table']))
+			$attributes['data-token'] = $this->model->_InstantSearch->getToken($attributes['data-table']);
+
 		echo '<input type="text" ' . $this->implodeAttributes($attributes) . ' />';
 	}
 

@@ -22,6 +22,8 @@ class Base
 			'where' => [],
 			'limit' => 200,
 			'fill' => null,
+			'wrap' => null,
+			'token' => null,
 		], $options);
 
 		$this->init();
@@ -88,6 +90,13 @@ class Base
 
 	public function getItemFromId($id): array
 	{
+		if (!$this->tokenCompare()) {
+			return [
+				'id' => null,
+				'text' => '',
+			];
+		}
+
 		$r = $id ? $this->model->_Db->select($this->options['table'], $id) : false;
 		if (!$r) {
 			return [
@@ -112,6 +121,9 @@ class Base
 			$fields = $this->options['table-fields'];
 
 		if (!$this->options['table'] or !$fields)
+			return [];
+
+		if (!$this->tokenCompare())
 			return [];
 
 		$where = $this->makeQuery($query, $fields);
@@ -200,5 +212,12 @@ class Base
 			}
 		}
 		return array_unique($totalFields);
+	}
+
+	private function tokenCompare(): bool
+	{
+		$token = $this->model->_RandToken->getToken('Form');
+		$tokenCompare = sha1($this->options['table'] . $token);
+		return ($tokenCompare === $this->options['token']);
 	}
 }
