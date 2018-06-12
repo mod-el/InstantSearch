@@ -220,4 +220,19 @@ class Base
 		$tokenCompare = sha1($this->options['table'] . $token);
 		return ($tokenCompare === $this->options['token']);
 	}
+
+	public function wrapFill($row)
+	{
+		if (!is_array($row) or !isset($row['fill']) or !$this->options['wrap'])
+			return $row;
+
+		$newFill = [];
+		foreach ($row['fill'] as $k => $v) {
+			$k = str_replace('[name]', $k, $this->options['wrap']);
+			$newFill[$k] = $v;
+		}
+		$row['fill'] = $newFill;
+
+		return $row;
+	}
 }

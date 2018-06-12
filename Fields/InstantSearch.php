@@ -110,8 +110,11 @@ class InstantSearch extends Field
 		if ($fieldOptions['text-field'])
 			$fieldOptions['fields'] = is_array($fieldOptions['text-field']) ? $fieldOptions['text-field'] : [$fieldOptions['text-field']];
 
+		if ($this->form and $this->form->options['wrap-names'])
+			$fieldOptions['wrap'] = $this->form->options['wrap-names'];
+
 		$helper = new $helper_name($this->model, $fieldOptions);
-		return $helper->getItemFromId($this->getValue($lang));
+		return $helper->wrapFill($helper->getItemFromId($this->getValue($lang)));
 	}
 
 	public function getText(array $options = []): string
