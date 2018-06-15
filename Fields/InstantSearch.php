@@ -110,6 +110,8 @@ class InstantSearch extends Field
 		if ($fieldOptions['text-field'])
 			$fieldOptions['fields'] = is_array($fieldOptions['text-field']) ? $fieldOptions['text-field'] : [$fieldOptions['text-field']];
 
+		if (!isset($fieldOptions['token']) and isset($fieldOptions['table']))
+			$fieldOptions['token'] = $this->model->_InstantSearch->getToken($fieldOptions['table']);
 		if ($this->form and $this->form->options['wrap-names'])
 			$fieldOptions['wrap'] = $this->form->options['wrap-names'];
 
