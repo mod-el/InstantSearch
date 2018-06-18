@@ -524,12 +524,13 @@ function setInstantSearch(name, field, res) {
 		res.mark.push(fieldName);
 
 	for (var f in res.fill) {
-		if (!res.fill.hasOwnProperty(f) || typeof instantSearches[name].inputs[f] === 'undefined')
+		if (!res.fill.hasOwnProperty(f))
 			return;
-		var el = instantSearches[name].inputs[f];
-		promises.push(el.setValue(res.fill[f]));
-		if (el instanceof Element)
-			el.setAttribute('title', res.fill[f]);
+		if (typeof instantSearches[name].inputs[f] === 'undefined')
+			var fieldToFill = instantSearches[name].inputs[f];
+		else if (hidden && typeof hidden.form !== 'undefined' && typeof hidden.form[f] !== 'undefined')
+			var fieldToFill = hidden.form[f];
+		promises.push(fieldToFill.setValue(res.fill[f]));
 	}
 
 	res.mark.forEach(function (f) {
@@ -545,6 +546,8 @@ function markInstantSearch(field) {
 	field.readOnly = true;
 	field.setAttribute('onclick', 'unmarkInstantSearch(this)');
 	field.addClass('model-instant-search-marked');
+	if (field instanceof Element)
+		field.setAttribute('title', field.getValue(true));
 }
 
 function unmarkInstantSearch(field) {
