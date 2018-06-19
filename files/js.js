@@ -526,7 +526,7 @@ function setInstantSearch(name, field, res) {
 	for (var f in res.fill) {
 		if (!res.fill.hasOwnProperty(f))
 			return;
-		if (typeof instantSearches[name].inputs[f] === 'undefined')
+		if (typeof instantSearches[name].inputs[f] !== 'undefined')
 			var fieldToFill = instantSearches[name].inputs[f];
 		else if (hidden && typeof hidden.form !== 'undefined' && typeof hidden.form[f] !== 'undefined')
 			var fieldToFill = hidden.form[f];
