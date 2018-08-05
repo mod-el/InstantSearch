@@ -15,7 +15,7 @@ Rules:
 function checkInstantSearches() {
 	return new Promise(function (resolve) {
 		var instantSearchesCreated = [];
-		document.querySelectorAll('[data-instant-search]').forEach(function (el) {
+		Array.from(document.querySelectorAll('[data-instant-search]')).forEach(function (el) {
 			if (el.getAttribute('data-instant-search-set'))
 				return;
 			if (el.parentNode.offsetParent === null)
@@ -555,7 +555,7 @@ function unmarkInstantSearch(field) {
 	if (typeof instantSearches[name] === 'undefined')
 		return false;
 
-	document.querySelectorAll('.model-instant-search-marked[data-instant-search="' + name + '"]').forEach(function (f) {
+	Array.from(document.querySelectorAll('.model-instant-search-marked[data-instant-search="' + name + '"]')).forEach(function (f) {
 		f.removeClass('model-instant-search-marked');
 		f.readOnly = false;
 		f.onclick = function () {
@@ -666,7 +666,7 @@ function setInstantSearchValue(v) {
 function resetAllInstantSearches() {
 	instantSearches = {};
 	activeInstantSearch = false;
-	document.querySelectorAll('[data-instant-search-set]').forEach(function (el) {
+	Array.from(document.querySelectorAll('[data-instant-search-set]')).forEach(function (el) {
 		el.removeAttribute('data-instant-search-set');
 		if (el.type.toLowerCase() === 'hidden' && el.getAttribute('name'))
 			el.removeAttribute('name');
