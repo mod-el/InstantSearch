@@ -130,10 +130,18 @@ function checkInstantSearches() {
 							get.push('pattern=' + encodeURIComponent(instantSearches[name].pattern));
 						if (instantSearches[name].where)
 							get.push('where=' + encodeURIComponent(instantSearches[name].where));
+						if (instantSearches[name].joins)
+							get.push('joins=' + encodeURIComponent(instantSearches[name].joins));
+						if (instantSearches[name].wrap)
+							get.push('wrap=' + encodeURIComponent(instantSearches[name].wrap));
+						if (instantSearches[name].token)
+							get.push('token=' + encodeURIComponent(instantSearches[name].token));
 						if (instantSearches[name]['fields'][fieldName])
 							get.push('fields=' + encodeURIComponent(instantSearches[name]['fields'][fieldName].join(',')));
 						if (instantSearches[name]['table-fields'][fieldName])
 							get.push('table-fields=' + encodeURIComponent(instantSearches[name]['table-fields'][fieldName].join(',')));
+						if (instantSearches[name]['fields'] && Object.keys(instantSearches[name]['fields']).length > 1)
+							get.push('fill=' + encodeURIComponent(JSON.stringify(instantSearches[name]['fields'])));
 
 						get = get.join('&');
 
