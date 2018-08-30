@@ -20,6 +20,7 @@ class Base
 			'table-fields' => null,
 			'pattern' => null,
 			'where' => [],
+			'joins' => [],
 			'limit' => 200,
 			'fill' => null,
 			'wrap' => null,
@@ -97,7 +98,7 @@ class Base
 			];
 		}
 
-		$r = $id ? $this->model->_Db->select($this->options['table'], $id) : false;
+		$r = $id ? $this->model->_Db->select($this->options['table'], $id, ['joins' => $this->options['joins']]) : false;
 		if (!$r) {
 			return [
 				'id' => null,
@@ -133,8 +134,10 @@ class Base
 		$qryOptions = [
 			'limit' => $this->options['limit'],
 			'stream' => false,
-			'fields' => $this->getTotalFields(true),
+			'joins' => $this->options['joins'],
 		];
+		if (empty($qryOptions['joins'])) // If I can, I select only required fields (can\'t do it if there are joined fields from other tables)
+			$qryOptions['fields'] = $this->getTotalFields(true);
 
 		return $this->model->_Db->select_all($this->options['table'], $where, $qryOptions);
 	}

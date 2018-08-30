@@ -27,6 +27,7 @@ class InstantSearch extends Field
 			'fields',
 			'table-fields',
 			'where',
+			'joins',
 			'post',
 			'post-function',
 		];
@@ -39,7 +40,7 @@ class InstantSearch extends Field
 		foreach ($is_options as $k) {
 			if (isset($this->options[$k]) and $this->options[$k]) {
 				if (is_array($this->options[$k])) {
-					$attributes['data-' . $k] = $k === 'where' ? json_encode($this->options[$k]) : implode(',', $this->options[$k]);
+					$attributes['data-' . $k] = in_array($k, ['where', 'joins']) ? json_encode($this->options[$k]) : implode(',', $this->options[$k]);
 				} else {
 					$attributes['data-' . $k] = $this->options[$k];
 				}
