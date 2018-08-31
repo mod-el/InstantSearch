@@ -609,6 +609,9 @@ function setInstantSearchValue(v) {
 	return new Promise((function (field) {
 		return function (resolve) {
 			if (typeof v !== 'object') {
+				if (instantSearches[name].hidden)
+					instantSearches[name].hidden.value = v;
+
 				var url = absolute_path + 'instant-search';
 				if (instantSearches[name].id)
 					url += '/' + instantSearches[name].id;
