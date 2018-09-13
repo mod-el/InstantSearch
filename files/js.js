@@ -660,12 +660,16 @@ function setInstantSearchValue(v) {
 		if (inputs.length > 0) {
 			if (typeof v.fill !== 'undefined' && Object.keys(v.fill).length > 0) {
 				for (var f in v.fill) {
-					if (!v.fill.hasOwnProperty(f) || typeof instantSearches[name].inputs[f] === 'undefined')
-						return;
-					var el = instantSearches[name].inputs[f];
-					el.setValue(v.fill[f]);
-					if (el instanceof Element)
-						el.setAttribute('title', v.fill[f]);
+					if (!v.fill.hasOwnProperty(f))
+						continue;
+					if (typeof instantSearches[name].inputs[f] !== 'undefined') {
+						var el = instantSearches[name].inputs[f];
+						el.setValue(v.fill[f]);
+						if (el instanceof Element)
+							el.setAttribute('title', v.fill[f]);
+					} else if (instantSearches[name].hidden && typeof instantSearches[name].hidden.form !== 'undefined' && typeof instantSearches[name].hidden.form[f] !== 'undefined') {
+						instantSearches[name].hidden.form[f].setValue(v.fill[f]);
+					}
 				}
 			}
 			var firstField = inputs[0];
