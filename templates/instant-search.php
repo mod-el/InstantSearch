@@ -8,7 +8,7 @@
 <table id="instant-search-table" cellspacing="0">
 	<tr>
 		<?php
-		foreach($this->options['fields'] as $f){
+		foreach($fields as $f){
 			if($f==='instant-search-main')
 				$f = 'Risultati';
 			?>

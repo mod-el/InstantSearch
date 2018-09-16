@@ -59,16 +59,16 @@ class InstantSearchController extends Controller
 
 				die();
 			} elseif (isset($_GET['popup'])) {
-				$this->viewOptions['template-path'] = 'model/InstantSearch/templates';
-				$this->viewOptions['cache'] = false;
-				$this->viewOptions['showLayout'] = false;
+				$this->model->viewOptions['template-path'] = 'model/InstantSearch/templates';
+				$this->model->viewOptions['cache'] = false;
+				$this->model->viewOptions['showLayout'] = false;
 
 				if (isset($_GET['table-fields']))
-					$this->viewOptions['fields'] = explode(',', $_GET['table-fields']);
+					$this->model->inject('fields', explode(',', $_GET['table-fields']));
 				elseif (isset($_GET['fields']))
-					$this->viewOptions['fields'] = explode(',', $_GET['fields']);
+					$this->model->inject('fields', explode(',', $_GET['fields']));
 				else
-					$this->viewOptions['fields'] = ['instant-search-main'];
+					$this->model->inject('fields', ['instant-search-main']);
 			}
 		} catch (\Exception $e) {
 			echo getErr($e);
