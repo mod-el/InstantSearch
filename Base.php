@@ -151,7 +151,7 @@ class Base
 		$list = [];
 
 		if ($is_popup)
-			$fields = $this->options['table-fields'] ?: $this->options['fields'];
+			$fields = $this->options['table-fields'] ?: $this->options['fields'] ?: [];
 
 		$c = 0;
 		foreach ($q as $r) {
