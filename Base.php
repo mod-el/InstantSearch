@@ -21,6 +21,7 @@ class Base
 			'pattern' => null,
 			'where' => [],
 			'joins' => [],
+			'order_by' => null,
 			'limit' => 200,
 			'fill' => null,
 			'wrap' => null,
@@ -131,8 +132,13 @@ class Base
 		if ($this->options['where'])
 			$where = array_merge($this->options['where'], $where);
 
+		$order_by = $this->options['order_by'];
+		if ($order_by === null)
+			$order_by = implode(',', $fields);
+
 		$qryOptions = [
 			'limit' => $this->options['limit'],
+			'order_by' => $order_by,
 			'stream' => false,
 			'joins' => $this->options['joins'],
 		];
@@ -151,7 +157,7 @@ class Base
 		$list = [];
 
 		if ($is_popup)
-			$fields = $this->options['table-fields'] ?: $this->options['fields'];
+			$fields = $this->options['table-fields'] ?: $this->options['fields'] ?: [];
 
 		$c = 0;
 		foreach ($q as $r) {

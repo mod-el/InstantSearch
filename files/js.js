@@ -751,7 +751,13 @@ function popupInstantSearch() {
 					if (!firstRow.cells.hasOwnProperty(i)) continue;
 
 					var td = tr.insertCell(-1);
-					td.innerHTML = r[nr].fields[firstRow.cells[i].getAttribute('data-field')];
+					var k = firstRow.cells[i].getAttribute('data-field');
+					var text = '';
+					if (k === 'instant-search-main')
+						text = r[nr].text;
+					else if (typeof r[nr].fields[k] !== 'undefined')
+						text = r[nr].fields[k];
+					td.innerHTML = text;
 				}
 
 				tr.addEventListener('click', (function (res) {
