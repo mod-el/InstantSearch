@@ -3,7 +3,7 @@
 	"description": "A field that allows to do instant searches while typing",
 	"version": "1.5.1",
 	"dependencies": {
-		"Core": ">=2.7.1",
+		"Core": ">=2.8.1",
 		"FrontEnd": ">=1.2.0",
 		"Form": ">=1.4.7",
 		"RandToken": ">=0.1.0"
