@@ -370,8 +370,8 @@ function instantSearch(field, name, fieldName) {
 								};
 
 								var fieldToPass;
-								if (instantSearches[name].hidden.length > 0) {
-									fieldToPass = instantSearches[name].hidden[0];
+								if (instantSearches[name].hidden) {
+									fieldToPass = instantSearches[name].hidden;
 								} else {
 									fieldToPass = field;
 								}
