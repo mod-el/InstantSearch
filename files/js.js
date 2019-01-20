@@ -368,7 +368,15 @@ function instantSearch(field, name, fieldName) {
 								var onclick = function () {
 									eval(res.onclick);
 								};
-								if (onclick.call(null) === false)
+
+								var fieldToPass;
+								if (instantSearches[name].hidden.length > 0) {
+									fieldToPass = instantSearches[name].hidden[0];
+								} else {
+									fieldToPass = field;
+								}
+
+								if (onclick.call(fieldToPass) === false)
 									return false;
 							}
 
