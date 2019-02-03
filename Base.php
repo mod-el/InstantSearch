@@ -197,7 +197,7 @@ class Base
 	{
 		$arr = array();
 		foreach ($fields as $c) {
-			$arr[] = [$c, 'REGEXP', '(^|[^a-z0-9])' . $word];
+			$arr[] = [$c, 'REGEXP', '(^|[^a-z0-9])' . preg_quote($word)];
 		}
 		$where[] = ['operator' => 'OR', 'sub' => $arr];
 	}
