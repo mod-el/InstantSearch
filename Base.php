@@ -116,7 +116,7 @@ class Base
 		}, $fields));
 	}
 
-	public function getList(string $query, bool $is_popup = false): array
+	public function getList(string $query, bool $is_popup = false): iterable
 	{
 		$fields = $this->options['fields'];
 		if ($is_popup and $this->options['table-fields'])
@@ -139,7 +139,6 @@ class Base
 		$qryOptions = [
 			'limit' => $this->options['limit'],
 			'order_by' => $order_by,
-			'stream' => false,
 			'joins' => $this->options['joins'],
 		];
 		if (empty($qryOptions['joins'])) // If I can, I select only required fields (can\'t do it if there are joined fields from other tables)
