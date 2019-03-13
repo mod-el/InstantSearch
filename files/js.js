@@ -116,52 +116,7 @@ function checkInstantSearches() {
 			if (el.ctxMenu) {
 				el.ctxMenu({
 					'Ricerca avanzata': function () {
-						var url = absolute_path + 'instant-search';
-						if (instantSearches[name].id)
-							url += '/' + instantSearches[name].id;
-
-						var get = [
-							'popup=1'
-						];
-
-						if (instantSearches[name].table)
-							get.push('table=' + encodeURIComponent(instantSearches[name].table));
-						if (instantSearches[name].pattern)
-							get.push('pattern=' + encodeURIComponent(instantSearches[name].pattern));
-						if (instantSearches[name].where)
-							get.push('where=' + encodeURIComponent(instantSearches[name].where));
-						if (instantSearches[name].joins)
-							get.push('joins=' + encodeURIComponent(instantSearches[name].joins));
-						if (instantSearches[name].wrap)
-							get.push('wrap=' + encodeURIComponent(instantSearches[name].wrap));
-						if (instantSearches[name].token)
-							get.push('token=' + encodeURIComponent(instantSearches[name].token));
-						if (instantSearches[name]['fields'][fieldName])
-							get.push('fields=' + encodeURIComponent(instantSearches[name]['fields'][fieldName].join(',')));
-						if (instantSearches[name]['table-fields'][fieldName])
-							get.push('table-fields=' + encodeURIComponent(instantSearches[name]['table-fields'][fieldName].join(',')));
-						if (instantSearches[name]['fields'] && Object.keys(instantSearches[name]['fields']).length > 1)
-							get.push('fill=' + encodeURIComponent(JSON.stringify(instantSearches[name]['fields'])));
-
-						get = get.join('&');
-
-						var post = '';
-						if (instantSearches[name]['post'])
-							post = instantSearches[name]['post'];
-						else if (instantSearches[name]['post-function'])
-							post = instantSearches[name]['post-function'].call(field);
-
-						activeInstantSearch = {
-							'name': name,
-							'field': this,
-							'fieldName': fieldName,
-							'current': -1,
-							'popup': true
-						}
-
-						popupLastSearched = false;
-
-						zkPopup({'url': url, 'get': get, 'post': post}, {'onLoad': popupInstantSearch});
+						initInstantSearchPopup(name, fieldName, el);
 					}
 				});
 			}
@@ -291,7 +246,7 @@ function instantSearch(field, name, fieldName) {
 
 	checkInstantSearchPosition();
 
-	var url = absolute_path + 'instant-search';
+	var url = PATH + 'instant-search';
 	if (instantSearches[name].id)
 		url += '/' + instantSearches[name].id;
 
@@ -620,7 +575,7 @@ function setInstantSearchValue(v) {
 				if (instantSearches[name].hidden)
 					instantSearches[name].hidden.value = v;
 
-				var url = absolute_path + 'instant-search';
+				var url = PATH + 'instant-search';
 				if (instantSearches[name].id)
 					url += '/' + instantSearches[name].id;
 
@@ -704,7 +659,65 @@ function resetAllInstantSearches() {
 	checkInstantSearches();
 }
 
-function popupInstantSearch() {
+function initInstantSearchPopup(name, fieldName, field) {
+	if (typeof instantSearches[name] === 'undefined')
+		return;
+
+	if (typeof field === 'undefined' && Object.keys(instantSearches[name].inputs).length > 0)
+		field = instantSearches[name].inputs[Object.keys(instantSearches[name].inputs)[0]];
+
+	var url = PATH + 'instant-search';
+	if (instantSearches[name].id)
+		url += '/' + instantSearches[name].id;
+
+	var get = [
+		'popup=1'
+	];
+
+	if (instantSearches[name].table)
+		get.push('table=' + encodeURIComponent(instantSearches[name].table));
+	if (instantSearches[name].pattern)
+		get.push('pattern=' + encodeURIComponent(instantSearches[name].pattern));
+	if (instantSearches[name].where)
+		get.push('where=' + encodeURIComponent(instantSearches[name].where));
+	if (instantSearches[name].joins)
+		get.push('joins=' + encodeURIComponent(instantSearches[name].joins));
+	if (instantSearches[name].wrap)
+		get.push('wrap=' + encodeURIComponent(instantSearches[name].wrap));
+	if (instantSearches[name].token)
+		get.push('token=' + encodeURIComponent(instantSearches[name].token));
+	if (typeof fieldName !== 'undefined' && instantSearches[name]['fields'][fieldName])
+		get.push('fields=' + encodeURIComponent(instantSearches[name]['fields'][fieldName].join(',')));
+	if (typeof fieldName !== 'undefined' && instantSearches[name]['table-fields'][fieldName])
+		get.push('table-fields=' + encodeURIComponent(instantSearches[name]['table-fields'][fieldName].join(',')));
+	if (instantSearches[name]['fields'] && Object.keys(instantSearches[name]['fields']).length > 1)
+		get.push('fill=' + encodeURIComponent(JSON.stringify(instantSearches[name]['fields'])));
+
+	get = get.join('&');
+
+	var post = '';
+	if (instantSearches[name]['post'])
+		post = instantSearches[name]['post'];
+	else if (instantSearches[name]['post-function'])
+		post = instantSearches[name]['post-function'].call(field);
+
+	if (typeof fieldName === 'undefined' && Object.keys(instantSearches[name].inputs).length > 0)
+		fieldName = Object.keys(instantSearches[name].inputs)[0];
+
+	activeInstantSearch = {
+		'name': name,
+		'field': field,
+		'fieldName': fieldName,
+		'current': -1,
+		'popup': true
+	};
+
+	popupLastSearched = false;
+
+	zkPopup({'url': url, 'get': get, 'post': post}, {'onLoad': instantSearchPopup});
+}
+
+function instantSearchPopup() {
 	if (!_('instant-search-value'))
 		return false;
 
