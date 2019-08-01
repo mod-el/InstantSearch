@@ -494,8 +494,12 @@ function setInstantSearch(name, field, res) {
 	if (!fieldName)
 		fieldName = name;
 
-	if (typeof res.fill[fieldName] === 'undefined')
-		res.fill[fieldName] = res.text;
+	if (typeof res.fill[fieldName] === 'undefined') {
+		if (typeof res.plainText !== 'undefined')
+			res.fill[fieldName] = res.plainText;
+		else
+			res.fill[fieldName] = res.text;
+	}
 	if (!in_array(fieldName, res.mark))
 		res.mark.push(fieldName);
 
