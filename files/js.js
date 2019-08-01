@@ -95,7 +95,7 @@ function checkInstantSearches() {
 				eval('instantSearches[name][\'post-function\'] =  function(){ ' + el.getAttribute('data-post-function') + ' }');
 			}
 
-			el.setAttribute('autocomplete', 'off');
+			el.setAttribute('autocomplete', 'do-not');
 
 			el.addEventListener('keyup', (function (name, fieldName) {
 				return function (event) {
