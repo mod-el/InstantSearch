@@ -64,7 +64,10 @@ function checkInstantSearches() {
 			}
 
 			if (el.type.toLowerCase() === 'hidden') {
-				instantSearches[name]['hidden'].push(el);
+				if (Array.isArray(instantSearches[name]['hidden']))
+					instantSearches[name]['hidden'].push(el);
+				else
+					instantSearches[name]['hidden'] = [el];
 			} else {
 				instantSearches[name]['inputs'][fieldName] = el;
 			}
