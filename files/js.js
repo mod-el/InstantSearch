@@ -33,10 +33,7 @@ function checkInstantSearches() {
 				if (el.name) {
 					fieldName = el.name;
 				} else if (el.type.toLowerCase() !== 'hidden') {
-					let n = 0;
-					while (document.querySelector('[name="' + name + '-text-' + n + '"]'))
-						n++;
-					fieldName = name + '-text-' + n;
+					fieldName = randomString() + '-' + name;
 					el.name = fieldName;
 				}
 			}
@@ -98,7 +95,7 @@ function checkInstantSearches() {
 				eval('instantSearches[name][\'post-function\'] =  function(){ ' + el.getAttribute('data-post-function') + ' }');
 			}
 
-			el.setAttribute('autocomplete', 'do-not-' + Math.round(Math.random() * 1000));
+			el.setAttribute('autocomplete', 'off');
 
 			el.addEventListener('keyup', (function (name, fieldName) {
 				return function (event) {
@@ -179,6 +176,16 @@ function checkInstantSearches() {
 
 		resolve();
 	});
+}
+
+function randomString() {
+	var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	var charactersLength = characters.length;
+	var arr = [];
+	for (c = 1; c <= 10; c++) {
+		arr.push(characters.charAt(Math.floor(Math.random() * charactersLength)));
+	}
+	return arr.join('');
 }
 
 window.addEventListener('DOMContentLoaded', function () {
