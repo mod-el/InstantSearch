@@ -252,7 +252,7 @@ function instantSearch(field, name, fieldName) {
 	is.setAttribute('data-offset-y', offsetY);
 	is.setAttribute('data-highlight', highlight);
 
-	is.innerHTML = '<img src="' + base_path + 'model/Output/files/loading.gif" alt="" />';
+	is.innerHTML = '<img src="' + PATHBASE + 'model/Output/files/loading.gif" alt="" />';
 
 	checkInstantSearchPosition();
 
