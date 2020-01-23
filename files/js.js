@@ -516,11 +516,13 @@ function setInstantSearch(name, field, res) {
 	for (var f in res.fill) {
 		if (!res.fill.hasOwnProperty(f))
 			return;
+		var fieldToFill = null;
 		if (typeof instantSearches[name].inputs[f] !== 'undefined')
-			var fieldToFill = instantSearches[name].inputs[f];
+			fieldToFill = instantSearches[name].inputs[f];
 		else if (hidden && typeof hidden.form !== 'undefined' && typeof hidden.form[f] !== 'undefined')
-			var fieldToFill = hidden.form[f];
-		promises.push(fieldToFill.setValue(res.fill[f]));
+			fieldToFill = hidden.form[f];
+		if (fieldToFill)
+			promises.push(fieldToFill.setValue(res.fill[f]));
 	}
 
 	res.mark.forEach(function (f) {
