@@ -55,6 +55,8 @@ class InstantSearch extends Field
 
 		$item = $this->getItem($lang);
 
+		$attributes = $this->makeDependingFieldsAttributes($attributes);
+
 		if (!isset($attributes['only-text'])) {
 			$hiddenFieldAttributes = [
 				'data-instant-search' => $attributes['data-instant-search'],
