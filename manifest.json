@@ -1,20 +1,16 @@
 {
 	"name": "InstantSearch",
 	"description": "A field that allows to do instant searches while typing",
-	"version": "1.5.2",
+	"version": "1.6.0",
 	"dependencies": {
 		"Core": ">=2.8.5",
 		"FrontEnd": ">=1.2.2",
 		"Form": ">=1.4.9",
 		"RandToken": ">=0.1.0"
 	},
-	"css": [
-		"files/style.css"
-	],
-	"js": [
-		"files/js.js"
-	],
 	"assets-position": "foot",
+	"defer-js": true,
+	"defer-css": true,
 	"file-types": {
 		"Helper": {
 			"folder": "Helpers",
