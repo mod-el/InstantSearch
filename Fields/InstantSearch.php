@@ -33,7 +33,7 @@ class InstantSearch extends Field
 		];
 
 		if (!isset($attributes['data-instant-search'])) {
-			$attributes['data-instant-search'] = isset($attributes['name']) ? $attributes['name'] : $this->options['name'];
+			$attributes['data-instant-search'] = $attributes['name'] ?? $this->options['name'];
 			unset($attributes['name']);
 		}
 
@@ -130,5 +130,41 @@ class InstantSearch extends Field
 
 		$item = $this->getItem($options['lang']);
 		return $item['text'];
+	}
+
+	public function getJavascriptDescription(): array
+	{
+		$response = parent::getJavascriptDescription();
+
+		$is_options = [
+			'instant-search-id',
+			'table',
+			'pattern',
+			'id-field',
+			'fields',
+			'table-fields',
+			'where',
+			'joins',
+			'post',
+			'post-function',
+		];
+
+		foreach ($is_options as $k) {
+			if (isset($this->options[$k]) and $this->options[$k]) {
+				if (is_array($this->options[$k])) {
+					$response['attributes']['data-' . $k] = in_array($k, ['where', 'joins']) ? json_encode($this->options[$k]) : implode(',', $this->options[$k]);
+				} else {
+					$response['attributes']['data-' . $k] = $this->options[$k];
+				}
+			}
+		}
+
+		if ($this->options['text-field'] and !isset($response['attributes']['data-fields']))
+			$response['attributes']['data-fields'] = is_array($this->options['text-field']) ? implode(',', $this->options['text-field']) : $this->options['text-field'];
+
+		if (isset($response['attributes']['data-table']))
+			$response['attributes']['data-token'] = $this->model->_InstantSearch->getToken($response['attributes']['data-table']);
+
+		return $response;
 	}
 }
