@@ -89,8 +89,16 @@ function checkInstantSearches() {
 				instantSearches[name]['wrap'] = el.getAttribute('data-wrap');
 			if (el.getAttribute('data-token'))
 				instantSearches[name]['token'] = el.getAttribute('data-token');
-			if (el.getAttribute('data-instant-search-value'))
-				instantSearches[name]['initial-value'] = el.getAttribute('data-instant-search-value');
+			if (el.getAttribute('data-instant-search-value')) {
+				let initialValue = el.getAttribute('data-instant-search-value');
+				try {
+					let testJson = JSON.parse(initialValue);
+					if (testJson && typeof testJson === 'object' && testJson.hasOwnProperty('id') && testJson.hasOwnProperty('text'))
+						initialValue = testJson;
+				} catch (e) {
+				}
+				instantSearches[name]['initial-value'] = initialValue;
+			}
 			if (el.getAttribute('data-post-function')) {
 				eval('instantSearches[name][\'post-function\'] =  function(){ ' + el.getAttribute('data-post-function') + ' }');
 			}
@@ -169,7 +177,7 @@ function checkInstantSearches() {
 			instantSearches[name]['hidden'].setAttribute('data-setvalue-function', 'setInstantSearchValue');
 
 			if (instantSearches[name]['initial-value'] !== null) {
-				instantSearches[name]['hidden'].setValue(instantSearches[name]['initial-value']);
+				instantSearches[name]['hidden'].setValue(instantSearches[name]['initial-value'], false);
 				instantSearches[name]['initial-value'] = null;
 			}
 		});
@@ -581,7 +589,7 @@ function resetInstantSearch(field) {
 }
 
 function setInstantSearchValue(v) {
-	var name = this.getAttribute('data-instant-search');
+	let name = this.getAttribute('data-instant-search');
 	if (typeof instantSearches[name] === 'undefined')
 		return false;
 
@@ -826,3 +834,112 @@ function getInstantSearchInputs(name) {
 	var inputs = Object.keys(instantSearches[name].inputs);
 	return instantSearches[name].inputs[inputs[0]];
 }
+
+class FieldInstantSearch extends Field {
+	constructor(name, options = {}) {
+		super(name, options);
+	}
+
+	async getValue() {
+		let v = await super.getValue();
+		if (typeof v === 'object' && v.hasOwnProperty('id'))
+			v = v.id;
+		if (v === '')
+			v = null;
+		return v;
+	}
+
+	async setValue(v, trigger = true) {
+		this.value = v;
+
+		let node = await this.getNode();
+		if (this.options.multilang) {
+			for (let lang of this.options.multilang) {
+				if (node.hasOwnProperty(lang) && v.hasOwnProperty(lang)) {
+					if (document.body.contains(node)) {
+						if (v[lang] !== null && typeof v[lang] === 'object') {
+							await node[lang].querySelector('input[type="hidden"]').setValue(v[lang].id, trigger);
+							await node[lang].querySelector('input[type="text"]').setValue(v[lang].text, trigger);
+						} else {
+							await node[lang].querySelector('input[type="hidden"]').setValue(v[lang], trigger);
+						}
+					} else {
+						node.querySelector('input[type="hidden"]').setAttribute('data-instant-search-value', (v[lang] !== null && typeof v[lang] === 'object') ? JSON.stringify(v[lang]) : v[lang]);
+					}
+				}
+			}
+		} else {
+			if (document.body.contains(node)) {
+				if (v !== null && typeof v === 'object') {
+					await node.querySelector('input[type="hidden"]').setValue(v.id, trigger);
+					await node.querySelector('input[type="text"]').setValue(v.text, trigger);
+				} else {
+					await node.querySelector('input[type="hidden"]').setValue(v, trigger);
+				}
+			} else {
+				node.querySelector('input[type="hidden"]').setAttribute('data-instant-search-value', (v !== null && typeof v === 'object') ? JSON.stringify(v) : v);
+			}
+		}
+
+		if (trigger)
+			this.emit('change');
+	}
+
+	getSingleNode(lang = null) {
+		let attributes = this.options['attributes'] || {};
+		let hiddenAttributes = {};
+		let textAttributes = {};
+
+		attributes['data-instant-search'] = this.name;
+		for (let attr of Object.keys(attributes)) {
+			if ([
+				'name',
+				'class',
+				'style',
+				'placeholder',
+				'onkeyup',
+				'onkeydown',
+				'onkeypress',
+				'data-instant-search-id',
+				'data-table',
+				'data-pattern',
+				'data-id-field',
+				'data-fields',
+				'data-table-fields',
+				'data-where',
+				'data-joins',
+				'data-post',
+				'data-post-function',
+			].includes(attr)) {
+				textAttributes[attr] = attributes[attr];
+			} else if (['onchange'].includes(attr)) {
+				hiddenAttributes[attr] = attributes[attr];
+			} else {
+				textAttributes[attr] = attributes[attr];
+				hiddenAttributes[attr] = attributes[attr];
+			}
+		}
+
+		let div = document.createElement('div');
+
+		let text = document.createElement('input');
+		text.type = 'text';
+
+		super.assignAttributes(text, textAttributes, false);
+		super.assignEvents(text, textAttributes, ['keyup', 'keydown', 'click', 'input']);
+
+		let hidden = document.createElement('input');
+		hidden.type = 'hidden';
+
+		super.assignAttributes(hidden, hiddenAttributes);
+		super.assignEvents(hidden, hiddenAttributes, ['change']);
+
+		div.appendChild(hidden);
+		div.appendChild(text);
+
+		return div;
+	}
+}
+
+if (formSignatures)
+	formSignatures.set('instant-search', FieldInstantSearch);
