@@ -891,6 +891,8 @@ class FieldInstantSearch extends Field {
 		let textAttributes = {};
 
 		attributes['data-instant-search'] = this.name;
+		if (this.form)
+			attributes['data-instant-search'] += '-' + this.form.name;
 		for (let attr of Object.keys(attributes)) {
 			if ([
 				'name',
