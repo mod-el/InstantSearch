@@ -928,13 +928,13 @@ class FieldInstantSearch extends Field {
 		text.type = 'text';
 
 		super.assignAttributes(text, textAttributes, false);
-		super.assignEvents(text, textAttributes, ['keyup', 'keydown', 'click', 'input']);
+		super.assignEvents(text, textAttributes, lang, ['keyup', 'keydown', 'click', 'input']);
 
 		let hidden = document.createElement('input');
 		hidden.type = 'hidden';
 
 		super.assignAttributes(hidden, hiddenAttributes);
-		super.assignEvents(hidden, hiddenAttributes, ['change']);
+		super.assignEvents(hidden, hiddenAttributes, lang, ['change']);
 
 		div.appendChild(hidden);
 		div.appendChild(text);
