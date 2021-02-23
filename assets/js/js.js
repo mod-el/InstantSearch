@@ -842,6 +842,9 @@ class FieldInstantSearch extends Field {
 
 	async getValue() {
 		let v = await super.getValue();
+		if (v === null)
+			return null;
+
 		if (typeof v === 'object' && v.hasOwnProperty('id'))
 			v = v.id;
 		if (v === '')
