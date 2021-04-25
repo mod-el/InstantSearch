@@ -1,6 +1,7 @@
 var instantSearches = {};
 var activeInstantSearch = false;
-var popupLastSearched = '';
+var popupLastSearched = null;
+var activeInstantSearchVisualizer = null;
 
 /*
 Rules:
@@ -123,8 +124,11 @@ function checkInstantSearches() {
 
 			if (el.ctxMenu) {
 				el.ctxMenu({
-					'Ricerca avanzata': function () {
-						initInstantSearchPopup(name, fieldName, el);
+					'Ricerca avanzata': () => {
+						if (el.getAttribute('data-visualizer')) // Admin
+							instantSearchVisualizer(name, fieldName, el);
+						else
+							initInstantSearchPopup(name, fieldName, el);
 					}
 				});
 			}
@@ -739,9 +743,92 @@ function initInstantSearchPopup(name, fieldName, field) {
 		'popup': true
 	};
 
-	popupLastSearched = false;
+	popupLastSearched = null;
 
 	zkPopup({'url': url, 'get': get, 'post': post}, {'onLoad': instantSearchPopup});
+}
+
+async function instantSearchVisualizer(name, fieldName, field) {
+	if (typeof instantSearches[name] === 'undefined')
+		return;
+
+	if (typeof field === 'undefined' && Object.keys(instantSearches[name].inputs).length > 0)
+		field = instantSearches[name].inputs[Object.keys(instantSearches[name].inputs)[0]];
+
+	let visualizerConfig = field.getAttribute('data-visualizer');
+	try {
+		if (visualizerConfig)
+			visualizerConfig = JSON.parse(visualizerConfig);
+	} catch (e) {
+	}
+
+	if (!visualizerConfig || typeof visualizerConfig !== 'object')
+		return;
+
+	if (!visualizerConfig.page || !visualizerConfig.visualizer)
+		return;
+
+	popupLastSearched = null;
+
+	return zkPopup(`<div class="instant-search-input-box"><input type="text" id="instant-search-value" onkeyup="searchInstantSearchVisualizer()"/></div>
+<div id="instant-search-${name}-cont"></div>`, {
+		onClose: () => {
+			activeInstantSearchVisualizer = null;
+		}
+	}).then(() => {
+		return adminApiRequest('page/' + visualizerConfig.page);
+	}).then(pageDetails => {
+		let cont = _('instant-search-' + name + '-cont');
+
+		if (visualizerConfig.options)
+			pageDetails['visualizer-options'] = {...pageDetails['visualizer-options'], ...visualizerConfig.options};
+
+		pageDetails.toPick = id => {
+			instantSearches[name].hidden.setValue(id);
+			zkPopupClose();
+		};
+
+		if (visualizerConfig.visualizer === 'Table')
+			pageDetails['default-fields'] = instantSearches[name]['fields'][fieldName];
+
+		return loadVisualizer(visualizerConfig.visualizer, 'instant-search-' + name, cont, false, pageDetails);
+	}).then(visualizer => {
+		activeInstantSearchVisualizer = {name: name, fieldName: fieldName, visualizer: visualizer, config: visualizerConfig};
+		return searchInstantSearchVisualizer();
+	});
+}
+
+async function searchInstantSearchVisualizer() {
+	if (!activeInstantSearchVisualizer)
+		return;
+
+	let query = await _('instant-search-value').getValue();
+
+	if (query === popupLastSearched)
+		return false;
+
+	popupLastSearched = query;
+
+	let fields = instantSearches[activeInstantSearchVisualizer.name]['fields'][activeInstantSearchVisualizer.fieldName];
+	if (activeInstantSearchVisualizer.config.visualizer !== 'Table')
+		fields = activeInstantSearchVisualizer.visualizer.options['default-fields'];
+
+	activeInstantSearchVisualizer.visualizer.container.loading();
+
+	return adminApiRequest('page/' + activeInstantSearchVisualizer.config.page + '/search', {
+		"fields": fields,
+		"filters": await activeInstantSearchVisualizer.visualizer.getSpecialFilters(),
+		"per-page": 100,
+		"search": query,
+		"search-fields": fields
+	}, {method: 'POST'}).then(async response => {
+		let currentQuery = await _('instant-search-value').getValue();
+		if (currentQuery !== popupLastSearched)
+			return;
+
+		activeInstantSearchVisualizer.visualizer.container.innerHTML = '';
+		return activeInstantSearchVisualizer.visualizer.render(response.list);
+	});
 }
 
 function instantSearchPopup() {

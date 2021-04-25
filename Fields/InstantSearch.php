@@ -5,6 +5,18 @@ use Model\Form\Field;
 
 class InstantSearch extends Field
 {
+	public function __construct(string $name, array $options = [])
+	{
+		parent::__construct($name, $options);
+
+		if (isset($this->options['visualizer']) and is_string($this->options['visualizer'])) {
+			$this->options['visualizer'] = [
+				'page' => $this->options['visualizer'],
+				'visualizer' => 'Table',
+			];
+		}
+	}
+
 	protected function renderWithLang(array $attributes, string $lang = null)
 	{
 		if (!$this->model->isLoaded('InstantSearch'))
@@ -30,6 +42,7 @@ class InstantSearch extends Field
 			'joins',
 			'post',
 			'post-function',
+			'visualizer',
 		];
 
 		if (!isset($attributes['data-instant-search'])) {
@@ -39,11 +52,10 @@ class InstantSearch extends Field
 
 		foreach ($is_options as $k) {
 			if (isset($this->options[$k]) and $this->options[$k]) {
-				if (is_array($this->options[$k])) {
-					$attributes['data-' . $k] = in_array($k, ['where', 'joins']) ? json_encode($this->options[$k]) : implode(',', $this->options[$k]);
-				} else {
+				if (is_array($this->options[$k]))
+					$attributes['data-' . $k] = in_array($k, ['where', 'joins', 'visualizer']) ? json_encode($this->options[$k]) : implode(',', $this->options[$k]);
+				else
 					$attributes['data-' . $k] = $this->options[$k];
-				}
 			}
 			$textFieldAttributes[] = 'data-' . $k;
 		}
@@ -147,15 +159,15 @@ class InstantSearch extends Field
 			'joins',
 			'post',
 			'post-function',
+			'visualizer',
 		];
 
 		foreach ($is_options as $k) {
 			if (isset($this->options[$k]) and $this->options[$k]) {
-				if (is_array($this->options[$k])) {
-					$response['attributes']['data-' . $k] = in_array($k, ['where', 'joins']) ? json_encode($this->options[$k]) : implode(',', $this->options[$k]);
-				} else {
+				if (is_array($this->options[$k]))
+					$response['attributes']['data-' . $k] = in_array($k, ['where', 'joins', 'visualizer']) ? json_encode($this->options[$k]) : implode(',', $this->options[$k]);
+				else
 					$response['attributes']['data-' . $k] = $this->options[$k];
-				}
 			}
 		}
 
