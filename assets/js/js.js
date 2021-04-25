@@ -550,8 +550,6 @@ function markInstantSearch(field) {
 	field.readOnly = true;
 	field.setAttribute('onclick', 'unmarkInstantSearch(this)');
 	field.addClass('model-instant-search-marked');
-	if (field instanceof Element)
-		field.setAttribute('title', field.getValue(true));
 }
 
 function unmarkInstantSearch(field) {
@@ -663,12 +661,12 @@ function setInstantSearchValue(v) {
 					}
 				}
 			}
-			var firstField = inputs[0];
+			let firstField = inputs[0];
 			if ((typeof v.fill === 'undefined' || typeof v.fill[firstField] === 'undefined') && instantSearches[name].inputs[firstField]) {
-				if (typeof v.plainText !== 'undefined')
-					instantSearches[name].inputs[firstField].setValue(v.plainText);
-				else
-					instantSearches[name].inputs[firstField].setValue(v.text);
+				let text = v.plainText || v.text;
+				instantSearches[name].inputs[firstField].setValue(text);
+				instantSearches[name].inputs[firstField].setAttribute('title', text);
+
 				if (v.id)
 					markInstantSearch(instantSearches[name].inputs[firstField]);
 			}
