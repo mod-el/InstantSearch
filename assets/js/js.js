@@ -616,6 +616,8 @@ function setInstantSearchValue(v) {
 
 				if (instantSearches[name].table)
 					get.push('table=' + encodeURIComponent(instantSearches[name].table));
+				if (instantSearches[name]['id-field'])
+					get.push('id-field=' + encodeURIComponent(instantSearches[name]['id-field']));
 				if (instantSearches[name].pattern)
 					get.push('pattern=' + encodeURIComponent(instantSearches[name].pattern));
 				if (instantSearches[name].where)

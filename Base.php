@@ -99,7 +99,7 @@ class Base
 			];
 		}
 
-		$r = $id ? $this->model->_Db->select($this->options['table'], $id, ['joins' => $this->options['joins']]) : false;
+		$r = $id ? $this->model->_Db->select($this->options['table'], [$this->options['id-field'] => $id], ['joins' => $this->options['joins']]) : false;
 		if (!$r) {
 			return [
 				'id' => null,
