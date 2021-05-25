@@ -45,6 +45,7 @@ function checkInstantSearches() {
 				instantSearches[name] = {
 					'id': null,
 					'table': null,
+					'id-field': null,
 					'pattern': null,
 					'fields': {},
 					'table-fields': {},
@@ -74,6 +75,8 @@ function checkInstantSearches() {
 				instantSearches[name]['id'] = el.getAttribute('data-instant-search-id');
 			if (el.getAttribute('data-table'))
 				instantSearches[name]['table'] = el.getAttribute('data-table');
+			if (el.getAttribute('data-id-field'))
+				instantSearches[name]['id-field'] = el.getAttribute('data-id-field');
 			if (el.getAttribute('data-pattern'))
 				instantSearches[name]['pattern'] = el.getAttribute('data-pattern');
 			if (el.getAttribute('data-where'))
@@ -278,6 +281,8 @@ function instantSearch(field, name, fieldName) {
 
 	if (instantSearches[name].table)
 		get.push('table=' + encodeURIComponent(instantSearches[name].table));
+	if (instantSearches[name]['id-field'])
+		get.push('id-field=' + encodeURIComponent(instantSearches[name]['id-field']));
 	if (instantSearches[name].pattern)
 		get.push('pattern=' + encodeURIComponent(instantSearches[name].pattern));
 	if (instantSearches[name].where)
