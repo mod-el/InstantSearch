@@ -43,7 +43,7 @@ function checkInstantSearches() {
 				instantSearchesCreated.push(name);
 			if (typeof instantSearches[name] === 'undefined') {
 				instantSearches[name] = {
-					'id': null,
+					'helper': null,
 					'table': null,
 					'id-field': null,
 					'pattern': null,
@@ -71,8 +71,10 @@ function checkInstantSearches() {
 				instantSearches[name]['inputs'][fieldName] = el;
 			}
 
-			if (el.getAttribute('data-instant-search-id'))
-				instantSearches[name]['id'] = el.getAttribute('data-instant-search-id');
+			if (el.getAttribute('data-helper'))
+				instantSearches[name]['helper'] = el.getAttribute('data-helper');
+			if (el.getAttribute('data-instant-search-id')) // Deprecated
+				instantSearches[name]['helper'] = el.getAttribute('data-instant-search-id');
 			if (el.getAttribute('data-table'))
 				instantSearches[name]['table'] = el.getAttribute('data-table');
 			if (el.getAttribute('data-id-field'))
@@ -272,8 +274,8 @@ function instantSearch(field, name, fieldName) {
 	checkInstantSearchPosition();
 
 	var url = PATH + 'instant-search';
-	if (instantSearches[name].id)
-		url += '/' + instantSearches[name].id;
+	if (instantSearches[name].helper)
+		url += '/' + instantSearches[name].helper;
 
 	var get = [
 		'text=' + encodeURIComponent(field.value)
@@ -607,11 +609,11 @@ function setInstantSearchValue(v) {
 					instantSearches[name].hidden.value = v;
 
 				var url = PATH + 'instant-search';
-				if (instantSearches[name].id)
-					url += '/' + instantSearches[name].id;
+				if (instantSearches[name].helper)
+					url += '/' + instantSearches[name].helper;
 
 				var get = [
-					'v=' + encodeURIComponent(v)
+					'v=' + (v ? encodeURIComponent(v) : '')
 				];
 
 				if (instantSearches[name].table)
@@ -703,8 +705,8 @@ function initInstantSearchPopup(name, fieldName, field) {
 		field = instantSearches[name].inputs[Object.keys(instantSearches[name].inputs)[0]];
 
 	var url = PATH + 'instant-search';
-	if (instantSearches[name].id)
-		url += '/' + instantSearches[name].id;
+	if (instantSearches[name].helper)
+		url += '/' + instantSearches[name].helper;
 
 	var get = [
 		'popup=1'
@@ -959,7 +961,7 @@ class FieldInstantSearch extends Field {
 							await node[lang].querySelector('input[type="hidden"]').setValue(v[lang], trigger);
 						}
 					} else {
-						node.querySelector('input[type="hidden"]').setAttribute('data-instant-search-value', (v[lang] !== null && typeof v[lang] === 'object') ? JSON.stringify(v[lang]) : v[lang]);
+						node.querySelector('input[type="hidden"]').setAttribute('data-instant-search-value', v[lang] === null ? '' : (typeof v[lang] === 'object' ? JSON.stringify(v[lang]) : v[lang]));
 					}
 				}
 			}
@@ -972,7 +974,7 @@ class FieldInstantSearch extends Field {
 					await node.querySelector('input[type="hidden"]').setValue(v, trigger);
 				}
 			} else {
-				node.querySelector('input[type="hidden"]').setAttribute('data-instant-search-value', (v !== null && typeof v === 'object') ? JSON.stringify(v) : v);
+				node.querySelector('input[type="hidden"]').setAttribute('data-instant-search-value', v === null ? '' : (typeof v === 'object' ? JSON.stringify(v) : v));
 			}
 		}
 
@@ -997,7 +999,8 @@ class FieldInstantSearch extends Field {
 				'onkeyup',
 				'onkeydown',
 				'onkeypress',
-				'data-instant-search-id',
+				'data-helper',
+				'data-instant-search-id', // Deprecated
 				'data-table',
 				'data-pattern',
 				'data-id-field',

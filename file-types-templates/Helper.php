@@ -20,7 +20,7 @@ class {name} extends Base
 		return $this->getItem($element);
 	}
 
-	public function getList(string $query, bool $is_popup = false): array
+	public function getList(string $query, bool $is_popup = false): iterable
 	{
 		// return a numeric array, a list of elements, that will be passed to getItem
 	}

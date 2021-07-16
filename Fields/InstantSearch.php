@@ -9,6 +9,11 @@ class InstantSearch extends Field
 	{
 		parent::__construct($name, $options);
 
+		if (!empty($this->options['instant-search-id'])) {
+			$this->options['helper'] = $this->options['instant-search-id'];
+			unset($this->options['instant-search-id']);
+		}
+
 		if (isset($this->options['visualizer']) and is_string($this->options['visualizer'])) {
 			$this->options['visualizer'] = [
 				'page' => $this->options['visualizer'],
@@ -32,7 +37,7 @@ class InstantSearch extends Field
 		];
 
 		$is_options = [
-			'instant-search-id',
+			'helper',
 			'table',
 			'pattern',
 			'id-field',
@@ -92,7 +97,7 @@ class InstantSearch extends Field
 			unset($attributes['only-text']);
 		}
 
-		if (isset($attributes['data-instant-search-id']) and $this->form and $this->form->options['wrap-names'])
+		if (isset($attributes['data-helper']) and $this->form and $this->form->options['wrap-names'])
 			$attributes['data-wrap'] = $this->form->options['wrap-names'];
 
 		if (isset($attributes['data-table']))
@@ -113,8 +118,8 @@ class InstantSearch extends Field
 
 	private function getItem($lang = null)
 	{
-		if (isset($this->options['instant-search-id']) and $this->options['instant-search-id']) {
-			$helper_name = Autoloader::searchFile('Helper', $this->options['instant-search-id']);
+		if (!empty($this->options['helper'])) {
+			$helper_name = Autoloader::searchFile('Helper', $this->options['helper']);
 			if (!$helper_name)
 				$this->model->error('Instant Search error: provided helper name "' . $helper_name . '" does not seem to exist."');
 		} else {
@@ -149,7 +154,7 @@ class InstantSearch extends Field
 		$response = parent::getJavascriptDescription();
 
 		$is_options = [
-			'instant-search-id',
+			'helper',
 			'table',
 			'pattern',
 			'id-field',

@@ -1,7 +1,7 @@
 {
 	"name": "InstantSearch",
-	"description": "A field that allows to do instant searches while typing",
-	"version": "1.6.0",
+	"description": "Autocomplete field type",
+	"version": "1.7.0",
 	"dependencies": {
 		"Core": ">=2.8.5",
 		"FrontEnd": ">=1.2.2",
