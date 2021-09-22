@@ -777,12 +777,19 @@ async function instantSearchVisualizer(name, fieldName, field) {
 
 	popupLastSearched = null;
 
-	return zkPopup(`<div class="instant-search-input-box"><input type="text" id="instant-search-value" onkeyup="searchInstantSearchVisualizer()"/></div>
-<div id="instant-search-${name}-cont"></div>`, {
+	let popupOptions = {
 		onClose: () => {
 			activeInstantSearchVisualizer = null;
 		}
-	}).then(() => {
+	};
+
+	if (visualizerConfig.top)
+		popupOptions.top = visualizerConfig.top;
+	if (visualizerConfig.left)
+		popupOptions.left = visualizerConfig.left;
+
+	return zkPopup(`<div class="instant-search-input-box"><input type="text" id="instant-search-value" onkeyup="searchInstantSearchVisualizer()"/></div>
+<div id="instant-search-${name}-cont"></div>`, popupOptions).then(() => {
 		return adminApiRequest('page/' + visualizerConfig.page);
 	}).then(pageDetails => {
 		let cont = _('instant-search-' + name + '-cont');
