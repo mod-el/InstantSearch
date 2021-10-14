@@ -128,14 +128,34 @@ function checkInstantSearches() {
 			});
 
 			if (el.ctxMenu) {
-				el.ctxMenu({
-					'Ricerca avanzata': () => {
-						if (el.getAttribute('data-visualizer')) // Admin
+				let visualizerConfig = el.getAttribute('data-visualizer');
+
+				if (visualizerConfig) { // Admin
+					let menu = {
+						'Ricerca avanzata': () => {
 							instantSearchVisualizer(name, fieldName, el);
-						else
-							initInstantSearchPopup(name, fieldName, el);
+						}
+					};
+
+					try {
+						visualizerConfig = JSON.parse(visualizerConfig);
+					} catch (e) {
 					}
-				});
+
+					if (visualizerConfig && visualizerConfig.page) {
+						menu['Vai al dettaglio'] = () => {
+							window.open(adminPrefix + visualizerConfig.page + '/edit/' + instantSearches[name]['hidden'].getValue(true));
+						};
+					}
+
+					el.ctxMenu(menu);
+				} else {
+					el.ctxMenu({
+						'Ricerca avanzata': () => {
+							initInstantSearchPopup(name, fieldName, el);
+						}
+					});
+				}
 			}
 
 			el.setAttribute('data-instant-search-set', '1');
