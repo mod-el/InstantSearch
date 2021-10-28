@@ -1017,6 +1017,13 @@ class FieldInstantSearch extends Field {
 		attributes['data-instant-search'] = this.name;
 		if (this.form)
 			attributes['data-instant-search'] += '-' + this.form.name;
+
+		let depending_selects = null;
+		if (attributes['data-depending-parent']) {
+			depending_selects = attributes['data-depending-parent'];
+			delete attributes['data-depending-parent'];
+		}
+
 		for (let attr of Object.keys(attributes)) {
 			if ([
 				'name',
@@ -1039,7 +1046,9 @@ class FieldInstantSearch extends Field {
 				'data-post-function',
 			].includes(attr)) {
 				textAttributes[attr] = attributes[attr];
-			} else if (['onchange'].includes(attr)) {
+			} else if ([
+				'onchange',
+			].includes(attr)) {
 				hiddenAttributes[attr] = attributes[attr];
 			} else {
 				textAttributes[attr] = attributes[attr];
@@ -1048,6 +1057,10 @@ class FieldInstantSearch extends Field {
 		}
 
 		let div = document.createElement('div');
+		if (depending_selects) {
+			div.setAttribute('data-depending-parent', depending_selects);
+			this.addEventListener('change', this.reloadDependingSelects);
+		}
 
 		let text = document.createElement('input');
 		text.type = 'text';
