@@ -144,7 +144,11 @@ function checkInstantSearches() {
 
 					if (visualizerConfig && visualizerConfig.page) {
 						menu['Vai al dettaglio'] = () => {
-							window.open(adminPrefix + visualizerConfig.page + '/edit/' + instantSearches[name]['hidden'].getValue(true));
+							let id = instantSearches[name]['hidden'].getValue(true);
+							if (id)
+								window.open(adminPrefix + visualizerConfig.page + '/edit/' + id);
+							else
+								alert('Campo non valorizzato');
 						};
 					}
 
@@ -453,7 +457,7 @@ function selectInstantSearch(n) {
 }
 
 function closeInstantSearch() {
-	var is = _('model-instant-search');
+	let is = _('model-instant-search');
 	if (is)
 		is.parentNode.removeChild(is);
 
@@ -462,22 +466,38 @@ function closeInstantSearch() {
 }
 
 function checkInstantSearchPosition() {
-	var is = _('model-instant-search');
+	let is = _('model-instant-search');
 	if (!is || !activeInstantSearch)
 		return;
 
-	var offsetX = parseInt(is.getAttribute('data-offset-x'));
-	var offsetY = parseInt(is.getAttribute('data-offset-y'));
-	var c = activeInstantSearch.field.getBoundingClientRect();
-	is.style.left = (c.left + offsetX) + 'px';
-	is.style.top = (c.bottom + offsetY) + 'px';
+	let offsetX = parseInt(is.getAttribute('data-offset-x'));
+	let offsetY = parseInt(is.getAttribute('data-offset-y'));
 
-	var width = Math.max(parseInt(is.getAttribute('data-width')), parseInt(is.getAttribute('data-content-width') ? is.getAttribute('data-content-width') : 0));
-	if (c.left + offsetX + width > window.innerWidth - 5)
-		width = window.innerWidth - 5 - (c.left + offsetX);
+	let fieldBox = activeInstantSearch.field.getBoundingClientRect();
+	is.style.left = (fieldBox.left + offsetX) + 'px';
+
+	let verticalPositioning;
+	if (fieldBox.bottom + offsetY > window.innerHeight - 250) { // Troppo in basso nello schermo, la posiziono in alto rispetto al campo
+		is.style.bottom = ((window.innerHeight - fieldBox.top) + offsetY) + 'px';
+		verticalPositioning = 'top';
+		delete is.style.top;
+	} else {
+		is.style.top = (fieldBox.bottom + offsetY) + 'px';
+		verticalPositioning = 'bottom';
+		delete is.style.bottom;
+	}
+
+	let width = Math.max(parseInt(is.getAttribute('data-width')), parseInt(is.getAttribute('data-content-width') ? is.getAttribute('data-content-width') : 0));
+	if (fieldBox.left + offsetX + width > window.innerWidth - 5)
+		width = window.innerWidth - 5 - (fieldBox.left + offsetX);
 	is.style.width = width + 'px';
 
-	var height = window.innerHeight - (c.bottom + offsetY) - 20;
+	let height;
+	if (verticalPositioning === 'bottom')
+		height = window.innerHeight - (fieldBox.bottom + offsetY) - 20;
+	else
+		height = fieldBox.top - offsetY - 20;
+
 	if (height < 50)
 		height = 50;
 	is.style.maxHeight = height + 'px';
