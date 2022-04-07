@@ -29,6 +29,8 @@ class InstantSearchController extends Controller
 					$options['fields'] = explode(',', $_GET['fields']);
 				if (isset($_GET['id-field']))
 					$options['id-field'] = $_GET['id-field'];
+				if (isset($_GET['separator']))
+					$options['separator'] = $_GET['separator'];
 				if (isset($_GET['table-fields']))
 					$options['table-fields'] = explode(',', $_GET['table-fields']);
 				if (isset($_GET['pattern']))

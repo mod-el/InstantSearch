@@ -46,6 +46,7 @@ function checkInstantSearches() {
 					'helper': null,
 					'table': null,
 					'id-field': null,
+					'separator': ' ',
 					'pattern': null,
 					'fields': {},
 					'table-fields': {},
@@ -79,6 +80,8 @@ function checkInstantSearches() {
 				instantSearches[name]['table'] = el.getAttribute('data-table');
 			if (el.getAttribute('data-id-field'))
 				instantSearches[name]['id-field'] = el.getAttribute('data-id-field');
+			if (el.getAttribute('data-separator'))
+				instantSearches[name]['separator'] = el.getAttribute('data-separator');
 			if (el.getAttribute('data-pattern'))
 				instantSearches[name]['pattern'] = el.getAttribute('data-pattern');
 			if (el.getAttribute('data-where'))
@@ -309,6 +312,8 @@ function instantSearch(field, name, fieldName) {
 		get.push('table=' + encodeURIComponent(instantSearches[name].table));
 	if (instantSearches[name]['id-field'])
 		get.push('id-field=' + encodeURIComponent(instantSearches[name]['id-field']));
+	if (instantSearches[name]['separator'])
+		get.push('separator=' + encodeURIComponent(instantSearches[name]['separator']));
 	if (instantSearches[name].pattern)
 		get.push('pattern=' + encodeURIComponent(instantSearches[name].pattern));
 	if (instantSearches[name].where)
@@ -660,6 +665,8 @@ function setInstantSearchValue(v) {
 					get.push('table=' + encodeURIComponent(instantSearches[name].table));
 				if (instantSearches[name]['id-field'])
 					get.push('id-field=' + encodeURIComponent(instantSearches[name]['id-field']));
+				if (instantSearches[name]['separator'])
+					get.push('separator=' + encodeURIComponent(instantSearches[name]['separator']));
 				if (instantSearches[name].pattern)
 					get.push('pattern=' + encodeURIComponent(instantSearches[name].pattern));
 				if (instantSearches[name].where)
@@ -1058,6 +1065,7 @@ class FieldInstantSearch extends Field {
 				'data-table',
 				'data-pattern',
 				'data-id-field',
+				'data-separator',
 				'data-fields',
 				'data-table-fields',
 				'data-where',

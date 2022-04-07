@@ -4,18 +4,15 @@ use Model\Core\Core;
 
 class Base
 {
-	/** @var \Model\Core\Core */
-	protected $model;
 	/** @var array */
-	protected $options;
+	protected array $options;
 
-	public function __construct(Core $model, array $options = [])
+	public function __construct(protected Core $model, array $options = [])
 	{
-		$this->model = $model;
-
 		$this->options = array_merge([
 			'table' => null,
 			'fields' => null,
+			'separator' => ' ',
 			'id-field' => 'id',
 			'table-fields' => null,
 			'pattern' => null,
@@ -56,7 +53,7 @@ class Base
 			if (!$this->options['fields'] and !$this->options['fill'])
 				return $default;
 
-			$this->options['pattern'] = $this->makePattern($this->getTotalFields());
+			$this->options['pattern'] = $this->makePattern($this->getTotalFields(), $this->options['separator']);
 		}
 
 		$text = $this->options['pattern'];
@@ -109,9 +106,9 @@ class Base
 		return $this->getItem($r);
 	}
 
-	public function makePattern(array $fields): string
+	public function makePattern(array $fields, string $separator = ' '): string
 	{
-		return implode(' ', array_map(function ($f) {
+		return implode($separator, array_map(function ($f) {
 			return '[:' . $f . ']';
 		}, $fields));
 	}
