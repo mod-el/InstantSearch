@@ -108,9 +108,8 @@ function checkInstantSearches() {
 				}
 				instantSearches[name]['initial-value'] = initialValue;
 			}
-			if (el.getAttribute('data-post-function')) {
+			if (el.getAttribute('data-post-function'))
 				eval('instantSearches[name][\'post-function\'] =  function(){ ' + el.getAttribute('data-post-function') + ' }');
-			}
 
 			el.setAttribute('autocomplete', 'off');
 
@@ -331,7 +330,7 @@ function instantSearch(field, name, fieldName) {
 
 	get = get.join('&');
 
-	var post = '';
+	let post = '';
 	if (instantSearches[name]['post'])
 		post = instantSearches[name]['post'];
 	else if (instantSearches[name]['post-function'])
