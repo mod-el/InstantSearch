@@ -848,7 +848,9 @@ async function instantSearchVisualizer(name, fieldName, field) {
 			zkPopupClose();
 		};
 
-		if (visualizerConfig.visualizer === 'Table')
+		if (visualizerConfig.fields)
+			pageDetails['default-fields'] = visualizerConfig.fields;
+		else if (visualizerConfig.visualizer === 'Table')
 			pageDetails['default-fields'] = instantSearches[name]['fields'][fieldName];
 
 		return loadVisualizer(visualizerConfig.visualizer, 'instant-search-' + name, cont, false, pageDetails);
@@ -869,9 +871,7 @@ async function searchInstantSearchVisualizer() {
 
 	popupLastSearched = query;
 
-	let fields = instantSearches[activeInstantSearchVisualizer.name]['fields'][activeInstantSearchVisualizer.fieldName];
-	if (activeInstantSearchVisualizer.config.visualizer !== 'Table')
-		fields = activeInstantSearchVisualizer.visualizer.options['default-fields'];
+	let fields = activeInstantSearchVisualizer.visualizer.options['default-fields'];
 
 	activeInstantSearchVisualizer.visualizer.container.loading();
 
