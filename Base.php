@@ -160,10 +160,9 @@ class Base
 			$item = $this->getItem($r);
 
 			if ($is_popup) {
-				$arr['fields'] = [];
-				foreach ($fields as $f) {
-					$item['fields'][$f] = isset($r[$f]) ? $r[$f] : null;
-				}
+				$item['fields'] = [];
+				foreach ($fields as $f)
+					$item['fields'][$f] = $r[$f] ?? null;
 			}
 
 			$list[] = $item;
@@ -189,9 +188,9 @@ class Base
 		return $where;
 	}
 
-	private function addWord(array &$where, array $fields, string $word)
+	private function addWord(array &$where, array $fields, string $word): void
 	{
-		$arr = array();
+		$arr = [];
 		foreach ($fields as $c) {
 			$arr[] = [$c, 'REGEXP', '(^|[^a-z0-9])' . preg_quote($word)];
 		}
@@ -226,9 +225,9 @@ class Base
 		return ($tokenCompare === $this->options['token']);
 	}
 
-	public function wrapFill($row)
+	public function wrapFill(array $row): array
 	{
-		if (!is_array($row) or !isset($row['fill']) or !$this->options['wrap'])
+		if (!isset($row['fill']) or !$this->options['wrap'])
 			return $row;
 
 		$newFill = [];
