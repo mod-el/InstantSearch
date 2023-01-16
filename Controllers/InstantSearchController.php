@@ -20,7 +20,7 @@ class InstantSearchController extends Controller
 					$helper_name = '\\Model\\InstantSearch\\Base';
 				}
 
-				$is_popup = isset($_GET['popup']) ? true : false;
+				$is_popup = isset($_GET['popup']);
 
 				$options = [];
 				if (isset($_GET['table']))
@@ -72,7 +72,7 @@ class InstantSearchController extends Controller
 				else
 					$this->model->inject('fields', ['instant-search-main']);
 			}
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			echo getErr($e);
 			die();
 		}

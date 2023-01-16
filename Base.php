@@ -1,6 +1,7 @@
 <?php namespace Model\InstantSearch;
 
 use Model\Core\Core;
+use Model\Db\Db;
 
 class Base
 {
@@ -28,11 +29,11 @@ class Base
 		$this->init();
 	}
 
-	public function init()
+	public function init(): void
 	{
 	}
 
-	public function getItem($r): array
+	public function getItem(array|object|null $r): array
 	{
 		if (!$r) {
 			return [
@@ -96,7 +97,7 @@ class Base
 			];
 		}
 
-		$r = $id ? $this->model->_Db->select($this->options['table'], [$this->options['id-field'] => $id], ['joins' => $this->options['joins']]) : false;
+		$r = $id ? Db::getConnection()->select($this->options['table'], [$this->options['id-field'] => $id], ['joins' => $this->options['joins']]) : false;
 		if (!$r) {
 			return [
 				'id' => null,
@@ -129,19 +130,15 @@ class Base
 		if ($this->options['where'])
 			$where = array_merge($this->options['where'], $where);
 
-		$order_by = $this->options['order_by'];
-		if ($order_by === null)
-			$order_by = implode(',', $fields);
-
 		$qryOptions = [
 			'limit' => $this->options['limit'],
-			'order_by' => $order_by,
+			'order_by' => $this->options['order_by'],
 			'joins' => $this->options['joins'],
 		];
 		if (empty($qryOptions['joins'])) // If I can, I select only required fields (can\'t do it if there are joined fields from other tables)
 			$qryOptions['fields'] = $this->getTotalFields(true);
 
-		return $this->model->_Db->select_all($this->options['table'], $where, $qryOptions);
+		return Db::getConnection()->selectAll($this->options['table'], $where, $qryOptions);
 	}
 
 	public function getItemsList(string $query, bool $is_popup = false): array

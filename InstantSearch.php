@@ -8,7 +8,6 @@ class InstantSearch extends Module
 	 * Takes advantage of the Popup and ContextMenu modules, if present
 	 *
 	 * @param mixed $options
-	 * @throws \Model\Core\Exception
 	 */
 	function init(array $options)
 	{
