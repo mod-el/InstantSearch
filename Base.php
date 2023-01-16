@@ -97,7 +97,7 @@ class Base
 			];
 		}
 
-		$r = $id ? Db::getConnection()->select($this->options['table'], [$this->options['id-field'] => $id], ['joins' => $this->options['joins']]) : false;
+		$r = $id ? Db::getConnection()->select($this->options['table'], [$this->options['id-field'] => $id], ['joins' => $this->options['joins']]) : null;
 		if (!$r) {
 			return [
 				'id' => null,
