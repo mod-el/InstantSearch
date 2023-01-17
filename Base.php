@@ -88,7 +88,7 @@ class Base
 		return $item;
 	}
 
-	public function getItemFromId(?int $id): array
+	public function getItemFromId(?string $id): array
 	{
 		if (!$this->tokenCompare()) {
 			return [
