@@ -15,7 +15,7 @@ Rules:
 
 function checkInstantSearches() {
 	return new Promise(function (resolve) {
-		var instantSearchesCreated = [];
+		let instantSearchesCreated = [];
 		Array.from(document.querySelectorAll('[data-instant-search]')).forEach(function (el) {
 			if (el.getAttribute('data-instant-search-set'))
 				return;
@@ -174,18 +174,18 @@ function checkInstantSearches() {
 			}
 
 			if (instantSearches[name]['hidden'].length === 0) {
-				var hidden = document.createElement('input');
+				let hidden = document.createElement('input');
 				hidden.type = 'hidden';
 				hidden.name = name;
 				hidden.setAttribute('data-instant-search', name);
 				hidden.setAttribute('data-instant-search-set', '1');
 
-				var firstInput = instantSearches[name]['inputs'][Object.keys(instantSearches[name]['inputs'])[0]];
+				let firstInput = instantSearches[name]['inputs'][Object.keys(instantSearches[name]['inputs'])[0]];
 				firstInput = firstInput.parentNode.insertBefore(hidden, firstInput);
 
 				instantSearches[name]['hidden'] = firstInput;
 			} else {
-				var inputFound = false;
+				let inputFound = false;
 				instantSearches[name]['hidden'].some(function (input) {
 					if (!input.name) {
 						inputFound = input;
@@ -222,9 +222,9 @@ function checkInstantSearches() {
 }
 
 function randomString() {
-	var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	var charactersLength = characters.length;
-	var arr = [];
+	let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let charactersLength = characters.length;
+	let arr = [];
 	for (c = 1; c <= 10; c++) {
 		arr.push(characters.charAt(Math.floor(Math.random() * charactersLength)));
 	}
@@ -266,7 +266,7 @@ function instantSearch(field, name, fieldName) {
 		'popup': false
 	}
 
-	var is;
+	let is;
 	if (_('model-instant-search')) {
 		is = _('model-instant-search');
 	} else {
@@ -280,7 +280,7 @@ function instantSearch(field, name, fieldName) {
 		is = document.body.appendChild(is);
 	}
 
-	var width = field.offsetWidth - 12, offsetX = 0, offsetY = 2, highlight = '#FFDD9C';
+	let width = field.offsetWidth - 12, offsetX = 0, offsetY = 2, highlight = '#FFDD9C';
 	if (field.getAttribute('data-width'))
 		width = parseInt(field.getAttribute('data-width'));
 	if (field.getAttribute('data-offset-x'))
@@ -299,11 +299,11 @@ function instantSearch(field, name, fieldName) {
 
 	checkInstantSearchPosition();
 
-	var url = PATH + 'instant-search';
+	let url = PATH + 'instant-search';
 	if (instantSearches[name].helper)
 		url += '/' + instantSearches[name].helper;
 
-	var get = [
+	let get = [
 		'text=' + encodeURIComponent(field.value)
 	];
 
@@ -351,15 +351,15 @@ function instantSearch(field, name, fieldName) {
 			activeInstantSearch['current'] = -1;
 
 			if (r.length === 0) {
-				is.innerHTML = '<span style="color: #999">No results</span>';
+				is.innerHTML = '<div style="color: #999">No results</div>';
 			} else {
 				is.innerHTML = '';
 				is.style.width = 'auto';
-				var maxWidth = 0;
+				let maxWidth = 0;
 
-				for (var nr in r) {
-					var res = r[nr];
-					var res_el = document.createElement('div');
+				for (let nr in r) {
+					let res = r[nr];
+					let res_el = document.createElement('div');
 					res_el.id = 'is-' + nr;
 					res_el.innerHTML = res.text;
 					res_el.setAttribute('data-n', nr);
@@ -377,17 +377,11 @@ function instantSearch(field, name, fieldName) {
 					res_el.go = (function (res, name, field) {
 						return function () {
 							if (res.onclick) {
-								var onclick = function () {
+								let onclick = function () {
 									eval(res.onclick);
 								};
 
-								var fieldToPass;
-								if (instantSearches[name].hidden) {
-									fieldToPass = instantSearches[name].hidden;
-								} else {
-									fieldToPass = field;
-								}
-
+								let fieldToPass = instantSearches[name].hidden || field;
 								if (onclick.call(fieldToPass) === false)
 									return false;
 							}
@@ -412,16 +406,34 @@ function instantSearch(field, name, fieldName) {
 
 				selectInstantSearch(0);
 			}
+
+			let visualizerConfig = field.getAttribute('data-visualizer');
+			if (visualizerConfig) { // Admin
+				try {
+					visualizerConfig = JSON.parse(visualizerConfig);
+				} catch (e) {
+				}
+
+				if (visualizerConfig && visualizerConfig.page) {
+					let new_el = document.createElement('div');
+					new_el.innerHTML = 'Crea "' + field.value + '"';
+					new_el.className = 'selectable';
+					new_el.addEventListener('click', () => {
+						makeDynamicOption(field.modelField.name, visualizerConfig.page, 'main', {init_string: field.value});
+					});
+					is.appendChild(new_el);
+				}
+			}
 		}
 	})(is, field, name, fieldName, field.value));
 }
 
 function selectInstantSearch(n) {
-	var is = _('model-instant-search');
+	let is = _('model-instant-search');
 	if (!is || !activeInstantSearch)
 		return;
 
-	var current = activeInstantSearch['current'];
+	let current = activeInstantSearch['current'];
 
 	if (n === '-') {
 		if (current === 0)
@@ -435,17 +447,17 @@ function selectInstantSearch(n) {
 		return false;
 	}
 
-	var el = _('is-' + n);
+	let el = _('is-' + n);
 	if (!el)
 		return false;
 
-	var offsetFromTop = 0;
-	for (var i in is.childNodes) {
-		if (!is.childNodes.hasOwnProperty(i)) continue;
-		if (is.childNodes[i] == el)
+	let offsetFromTop = 0;
+	for (let child of is.childNodes) {
+		if (child == el)
 			break;
-		offsetFromTop += is.childNodes[i].offsetHeight;
+		offsetFromTop += child.offsetHeight;
 	}
+
 	elH = el.offsetHeight;
 	if (offsetFromTop < is.scrollTop)
 		is.scrollTop = offsetFromTop;
@@ -524,8 +536,8 @@ window.addEventListener('keydown', function (event) {
 			event.stopImmediatePropagation();
 			event.preventDefault();
 
-			var el;
-			if (el = _('is-' + activeInstantSearch['current'])) {
+			let el = _('is-' + activeInstantSearch['current']);
+			if (el) {
 				el.go();
 				return false;
 			}
@@ -535,19 +547,18 @@ window.addEventListener('keydown', function (event) {
 			event.stopImmediatePropagation();
 			closeInstantSearch();
 			return false;
-			break;
+
 		case 38:
 			selectInstantSearch('-');
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			return false;
-			break;
+
 		case 40:
 			selectInstantSearch('+');
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			return false;
-			break;
 	}
 });
 
@@ -555,13 +566,13 @@ function setInstantSearch(name, field, res) {
 	if (typeof instantSearches[name] === 'undefined')
 		return false;
 
-	var promises = [];
+	let promises = [];
 
-	var hidden = instantSearches[name].hidden;
+	let hidden = instantSearches[name].hidden;
 	if (hidden)
 		promises.push(hidden.setValue(res.id, true, false));
 
-	var fieldName = field.getAttribute('data-name');
+	let fieldName = field.getAttribute('data-name');
 	if (!fieldName && field.name)
 		fieldName = field.name;
 	if (!fieldName)
@@ -576,10 +587,10 @@ function setInstantSearch(name, field, res) {
 	if (!in_array(fieldName, res.mark))
 		res.mark.push(fieldName);
 
-	for (var f in res.fill) {
+	for (let f in res.fill) {
 		if (!res.fill.hasOwnProperty(f))
 			return;
-		var fieldToFill = null;
+		let fieldToFill = null;
 		if (typeof instantSearches[name].inputs[f] !== 'undefined')
 			fieldToFill = instantSearches[name].inputs[f];
 		else if (hidden && typeof hidden.form !== 'undefined' && typeof hidden.form[f] !== 'undefined')
@@ -604,7 +615,7 @@ function markInstantSearch(field) {
 }
 
 function unmarkInstantSearch(field) {
-	var name = field.getAttribute('data-instant-search');
+	let name = field.getAttribute('data-instant-search');
 	if (typeof instantSearches[name] === 'undefined')
 		return false;
 
@@ -628,7 +639,7 @@ function unmarkInstantSearch(field) {
 }
 
 function resetInstantSearch(field) {
-	var name = field.getAttribute('data-instant-search');
+	let name = field.getAttribute('data-instant-search');
 	if (typeof instantSearches[name] === 'undefined')
 		return false;
 
@@ -652,11 +663,11 @@ function setInstantSearchValue(v) {
 				if (instantSearches[name].hidden)
 					instantSearches[name].hidden.value = v;
 
-				var url = PATH + 'instant-search';
+				let url = PATH + 'instant-search';
 				if (instantSearches[name].helper)
 					url += '/' + instantSearches[name].helper;
 
-				var get = [
+				let get = [
 					'v=' + (v ? encodeURIComponent(v) : '')
 				];
 
@@ -688,7 +699,7 @@ function setInstantSearchValue(v) {
 
 				get = get.join('&');
 
-				var post = '';
+				let post = '';
 				if (instantSearches[name]['post'])
 					post = instantSearches[name]['post'];
 				else if (instantSearches[name]['post-function'])
@@ -700,14 +711,14 @@ function setInstantSearchValue(v) {
 			}
 		};
 	})(this)).then(function (v) {
-		var inputs = Object.keys(instantSearches[name].inputs);
+		let inputs = Object.keys(instantSearches[name].inputs);
 		if (inputs.length > 0) {
 			if (typeof v.fill !== 'undefined' && Object.keys(v.fill).length > 0) {
-				for (var f in v.fill) {
+				for (let f in v.fill) {
 					if (!v.fill.hasOwnProperty(f))
 						continue;
 					if (typeof instantSearches[name].inputs[f] !== 'undefined') {
-						var el = instantSearches[name].inputs[f];
+						let el = instantSearches[name].inputs[f];
 						el.setValue(v.fill[f]);
 						if (el instanceof Element)
 							el.setAttribute('title', v.fill[f]);
@@ -750,11 +761,11 @@ function initInstantSearchPopup(name, fieldName, field) {
 	if (typeof field === 'undefined' && Object.keys(instantSearches[name].inputs).length > 0)
 		field = instantSearches[name].inputs[Object.keys(instantSearches[name].inputs)[0]];
 
-	var url = PATH + 'instant-search';
+	let url = PATH + 'instant-search';
 	if (instantSearches[name].helper)
 		url += '/' + instantSearches[name].helper;
 
-	var get = [
+	let get = [
 		'popup=1'
 	];
 
@@ -779,7 +790,7 @@ function initInstantSearchPopup(name, fieldName, field) {
 
 	get = get.join('&');
 
-	var post = '';
+	let post = '';
 	if (instantSearches[name]['post'])
 		post = instantSearches[name]['post'];
 	else if (instantSearches[name]['post-function'])
@@ -895,10 +906,10 @@ function instantSearchPopup() {
 	if (!_('instant-search-value'))
 		return false;
 
-	var url = _('instant-search-url').getValue(true);
-	var get = _('instant-search-get').getValue(true);
-	var post = _('instant-search-post').getValue(true);
-	var v = _('instant-search-value').getValue(true);
+	let url = _('instant-search-url').getValue(true);
+	let get = _('instant-search-get').getValue(true);
+	let post = _('instant-search-post').getValue(true);
+	let v = _('instant-search-value').getValue(true);
 
 	if (v === popupLastSearched)
 		return false;
@@ -907,7 +918,7 @@ function instantSearchPopup() {
 
 	get += '&text=' + encodeURIComponent(v);
 
-	var table = _('instant-search-table');
+	let table = _('instant-search-table');
 	while (table.rows.length > 1)
 		table.deleteRow(-1);
 
@@ -934,24 +945,20 @@ function instantSearchPopup() {
 		if (r.length === 0) {
 			_('instant-search-cont-loading').innerHTML = '<span style="color: #999">No results</span>';
 		} else {
-			var table = _('instant-search-table');
+			let table = _('instant-search-table');
 
-			var firstRow = table.rows[0];
+			let firstRow = table.rows[0];
 
-			for (var nr in r) {
-				if (!r.hasOwnProperty(nr)) continue;
-
-				var tr = table.insertRow(-1);
-				for (var i in firstRow.cells) {
-					if (!firstRow.cells.hasOwnProperty(i)) continue;
-
-					var td = tr.insertCell(-1);
-					var k = firstRow.cells[i].getAttribute('data-field');
-					var text = '';
+			for (let row of r) {
+				let tr = table.insertRow(-1);
+				for (let cell in firstRow.cells) {
+					let td = tr.insertCell(-1);
+					let k = cell.getAttribute('data-field');
+					let text = '';
 					if (k === 'instant-search-main')
-						text = r[nr].text;
-					else if (typeof r[nr].fields[k] !== 'undefined')
-						text = r[nr].fields[k];
+						text = row.text;
+					else if (typeof row.fields[k] !== 'undefined')
+						text = row.fields[k];
 					td.innerHTML = text;
 				}
 
@@ -959,7 +966,7 @@ function instantSearchPopup() {
 					return function () {
 						setInstantSearchFromPopup(res);
 					}
-				})(r[nr]));
+				})(row));
 			}
 		}
 	});
@@ -978,7 +985,7 @@ function getInstantSearchInputs(name) {
 	if (typeof instantSearches[name] === 'undefined')
 		return null;
 
-	var inputs = Object.keys(instantSearches[name].inputs);
+	let inputs = Object.keys(instantSearches[name].inputs);
 	return instantSearches[name].inputs[inputs[0]];
 }
 

@@ -1,76 +1,74 @@
-.model-instant-search{
+.model-instant-search {
 	position: fixed;
 	padding: 5px;
 	border: solid #888 1px;
 	background: #FFF;
 	box-shadow: 1px 1px 2px #999;
 	z-index: 1100;
-	overflow-x : hidden;
-	overflow-y : auto;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
-.model-instant-search > div{
+.model-instant-search > div {
 	padding: 5px;
 	cursor: pointer;
 }
 
-.model-instant-search > div.selected{
+.model-instant-search > div.selected, .model-instant-search > .selectable:hover {
 	background: #FFDD9C;
 }
 
-.model-instant-search-result{
+.model-instant-search-result {
 	display: inline-block;
 	padding: 3px;
 	cursor: pointer;
 }
 
-.model-instant-search-marked{
+.model-instant-search-marked {
 	color: #999;
 	cursor: default;
 }
 
-.instant-search-input-box{
+.instant-search-input-box {
 	padding: 5px 0;
 }
 
-.instant-search-input-box input{
+.instant-search-input-box input {
 	width: 100%;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
-#instant-search-table{
+#instant-search-table {
 	width: 100%;
 	margin-top: 10px;
 }
 
-#instant-search-table tr td{
+#instant-search-table tr td {
 	height: 30px;
 	font-size: 1rem;
 	padding: 6px;
-	border-right: solid #ececec  1px;
-	border-bottom: solid #ececec  1px;
+	border-right: solid #ececec 1px;
+	border-bottom: solid #ececec 1px;
 	cursor: pointer;
 }
 
-#instant-search-table tr td:first-child{
-	border-left: solid #ececec  1px;
+#instant-search-table tr td:first-child {
+	border-left: solid #ececec 1px;
 }
 
-#instant-search-table tr td:last-child{
-	border-right: solid #ececec  1px;
+#instant-search-table tr td:last-child {
+	border-right: solid #ececec 1px;
 }
 
-#instant-search-table tr:nth-child(even) td{
+#instant-search-table tr:nth-child(even) td {
 	background: #FAFAFA;
 }
 
-#instant-search-table tr:nth-child(odd) td{
+#instant-search-table tr:nth-child(odd) td {
 	background: #FFF;
 }
 
-#instant-search-table tr:first-child td{
+#instant-search-table tr:first-child td {
 	font-family: 'Raleway', sans-serif;
 	padding: 0 0 0 10px;
 	line-height: 28px;
@@ -81,15 +79,15 @@
 	border-right: none;
 }
 
-#instant-search-table tr:first-child td:first-child{
+#instant-search-table tr:first-child td:first-child {
 	border-top-left-radius: 5px;
 }
 
-#instant-search-table tr:first-child td:last-child{
+#instant-search-table tr:first-child td:last-child {
 	border-top-right-radius: 5px;
 }
 
-#instant-search-cont-loading{
+#instant-search-cont-loading {
 	padding-top: 10px;
 	text-align: center;
 }
