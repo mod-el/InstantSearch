@@ -122,7 +122,7 @@ class InstantSearch extends Field
 		if (!empty($this->options['helper'])) {
 			$helper_name = Autoloader::searchFile('Helper', $this->options['helper']);
 			if (!$helper_name)
-				$this->model->error('Instant Search error: provided helper name "' . $helper_name . '" does not seem to exist."');
+				$this->model->error('Instant Search error: provided helper name "' . $this->options['helper'] . '" does not seem to exist."');
 		} else {
 			$helper_name = '\\Model\\InstantSearch\\Base';
 		}
