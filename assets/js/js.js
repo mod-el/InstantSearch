@@ -951,7 +951,7 @@ function instantSearchPopup() {
 
 			for (let row of r) {
 				let tr = table.insertRow(-1);
-				for (let cell in firstRow.cells) {
+				for (let cell of firstRow.cells) {
 					let td = tr.insertCell(-1);
 					let k = cell.getAttribute('data-field');
 					let text = '';
