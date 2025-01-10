@@ -22,7 +22,7 @@ class InstantSearch extends Field
 		}
 	}
 
-	protected function renderWithLang(array $attributes, string $lang = null)
+	protected function renderWithLang(array $attributes, ?string $lang = null): void
 	{
 		if (!$this->model->isLoaded('InstantSearch'))
 			$this->model->load('InstantSearch');
