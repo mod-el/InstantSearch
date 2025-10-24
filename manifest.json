@@ -1,7 +1,7 @@
 {
 	"name": "InstantSearch",
 	"description": "Autocomplete field type",
-	"version": "1.8.0",
+	"version": "2.0.0",
 	"dependencies": {
 		"Core": ">=3.0.0",
 		"FrontEnd": ">=1.2.2",

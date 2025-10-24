@@ -20,20 +20,6 @@ class InstantSearch extends Module
 	}
 
 	/**
-	 * Controller for API actions
-	 *
-	 * @param array $request
-	 * @param string $rule
-	 * @return array
-	 */
-	public function getController(array $request, string $rule): ?array
-	{
-		return [
-			'controller' => 'InstantSearch',
-		];
-	}
-
-	/**
 	 * Returns a security token, mandatory to send when not using a helper
 	 *
 	 * @param string $table
