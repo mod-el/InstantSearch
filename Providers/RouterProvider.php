@@ -8,7 +8,7 @@ class RouterProvider extends AbstractRouterProvider
 	{
 		return [
 			[
-				'pattern' => '/instant-search',
+				'pattern' => 'instant-search',
 				'controller' => 'InstantSearch',
 			],
 		];
